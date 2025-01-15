@@ -1,0 +1,2 @@
+Delete All Resources in the Current Namespace
+kubectl delete all --all
