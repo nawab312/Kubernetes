@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: default-backend
+  labels:
+    app: default-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: default-backend
+  template:
+    metadata:
+      labels:
+        app: default-backend 
+    spec:
+      containers:
+        - name: default-backend
+          image: k8s.gcr.io/defaultbackend-amd64:1.5
+          ports:
+            - containerPort: 80
