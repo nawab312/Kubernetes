@@ -20,3 +20,12 @@ Use the CA Certificate
 ```bash
 export ETCDCTL_CACERT=/path/to/etcd-ca.crt
 ```
+**Issue:**
+```bash
+siddharth312@siddharth312-GF65-Thin-9SD:~/ELK_Stack/Kubernets-Proj-1/logstash$ helm install logstash .
+Error: INSTALLATION FAILED: cannot re-use a name that is still in use
+```
+**Solution**
+```bash
+helm uninstall logstash
+```
