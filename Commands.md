@@ -26,3 +26,8 @@ Command to show labels of all pods in default namespace
 ```bash
 kubectl get pods --show-labels
 ```
+
+Command to scale deploayment named sid-deployment to 2 replicas
+```bash
+kubectl scale deployment sid-deployment --replicas=2
+```
