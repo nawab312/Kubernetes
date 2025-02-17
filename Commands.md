@@ -1,7 +1,7 @@
 Delete All Resources in the Current Namespace
 ```bash 
 kubectl delete all --all`
-``
+```
 
 ```bash 
 kubectl get events --field-selector involvedObject.name=oom-pod
