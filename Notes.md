@@ -61,6 +61,9 @@ A Node is a physical or virtual machine in the Kubernetes cluster that runs the 
 - **DaemonSet** in Kubernetes ensures that a copy of a specific Pod is running on every node (or a subset of nodes) in the cluster. This is useful for running system-level or utility applications that need to be present on each node, such as logging agents, monitoring agents, or networking tools.
     - One Pod per Node: DaemonSets guarantee that there will be exactly one Pod running on each node in the cluster. If new nodes are added, a Pod will be automatically scheduled to those nodes.
     - Pods in a DaemonSet are not scheduled based on normal Deployment behavior (replica scaling); they are scheduled based on the availability of nodes.
+ 
+**Storage in Kubernetes** https://github.com/nawab312/Kubernetes/blob/main/Storage/Notes.md
+**Services** https://github.com/nawab312/Kubernetes/blob/main/Services/Notes.md
 
 
 
