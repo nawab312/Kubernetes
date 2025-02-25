@@ -28,6 +28,6 @@ spec:
 
 **For a service, when we use nodeport, EVERY node does what?**
 
--Suppose your service is named  `my-service` and has a `NodePort` of `30001`. You send a request to `http://<node-ip>:30001`.
--Kubernetes' `kube-proxy` will proxy that request to the pods associated with my-service based on the service's selector.
+- Suppose your service is named  `my-service` and has a `NodePort` of `30001`. You send a request to `http://<node-ip>:30001`.
+- Kubernetes' `kube-proxy` will proxy that request to the pods associated with my-service based on the service's selector.
 
