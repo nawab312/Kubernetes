@@ -3,3 +3,22 @@
 - Shared Resources: Containers in the same Pod share networking (localhost) and storage volumes, allowing them to communicate efficiently.
 - Containers within a Pod run on the same node and are scheduled together, enabling them to work as a single logical unit.
 
+**How do you handle pod restarts when thery crash**
+- Define a RestartPolicy: By default, Kubernetes uses a RestartPolicy of `Always` for Pods, which automatically restarts containers when they fail. You can also set it to `OnFailure` or `Never` depending on your needs.
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  restartPolicy: OnFailure  # Only restart if the Pod fails
+  containers:
+    - name: my-container
+      image: my-app-image
+      ports:
+        - containerPort: 80
+```
+- Use a Liveness Probe: Kubernetes liveness probes detect unhealthy containers and restart them if needed.
+- Use Deployments or StatefulSets: For workloads managed by a Deployment or StatefulSet, Kubernetes automatically ensures the desired number of Pods are running. If a Pod crashes, the controller will recreate it.
+- Check logs and events: Use kubectl logs and kubectl describe pod to understand the cause of crashes and fix the underlying issue
+
