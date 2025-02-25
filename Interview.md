@@ -31,3 +31,10 @@ spec:
 - Suppose your service is named  `my-service` and has a `NodePort` of `30001`. You send a request to `http://<node-ip>:30001`.
 - Kubernetes' `kube-proxy` will proxy that request to the pods associated with my-service based on the service's selector.
 
+**A PV with the Retain reclaim policy is deleted after being bound to a PVC. What happens to the data in the underlying storage?**
+- The **Retain reclaim policy** ensures that the underlying storage is not automatically deleted or recycled when the PV is deleted. Instead, the data remains intact and accessible.
+- The PV enters a **Released state**, indicating that it is no longer bound to the PVC.
+- However, the underlying storage is not available for re-binding to other PVCs unless an administrator manually intervenes. To make the storage reusable, an administrator must manually clean up or prepare the storage (if needed) and re-create the PV to bind it to a new PVC.
+
+
+
