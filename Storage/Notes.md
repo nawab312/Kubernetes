@@ -85,3 +85,8 @@ parameters:
 
 `PVC in one namespace cannot bind to a PV in another namespaceNo. PVs are cluster-wide resources, but PVCs are namespace-scoped. A PVC can only bind to a PV in the same namespace or one without any namespace restrictions```
 
+**Handling Volume Expansion for Persistent Volumes**
+- Volume Type: Not all storage types support volume expansion. For example, cloud-based storage solutions such as AWS Elastic Block Store (EBS), Google Persistent Disk (GCE PD), and Azure Disks support expansion. However, traditional storage backends like NFS may require additional steps for expansion.
+- Storage Class: The PVC and PV must be associated with a StorageClass that allows volume expansion. The storage provisioner for the specific storage backend must also support resizing the volume. For instance, a StorageClass for AWS EBS must have `allowVolumeExpansion: true`.
+- Dynamic Provisioning: The expansion typically works only for dynamically provisioned volumes. Pre-provisioned PVs will require manual intervention
+
