@@ -1,4 +1,5 @@
 A Service in Kubernetes provides a way to expose your application running inside a set of Pods. We cannot scale a Kubernetes Service. **Endpoint** is an object that represents the IP addresses (Including Port) of the Pods that are dynamically assigned to a Service. It helps in routing traffic to the correct Pod(s) backing a Service.
+`SERVICE ---> ENDPOINT (automaticlaly created) --> POD'S IP and PORT`
 
 ### Why Services are Needed ###
 - Pod IPs Are Ephemeral: Pods are dynamic, and their IP addresses can change when they restart. A Service ensures a stable endpoint to communicate with the Pods.
