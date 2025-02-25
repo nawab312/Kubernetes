@@ -31,3 +31,18 @@ Command to scale deploayment named sid-deployment to 2 replicas
 ```bash
 kubectl scale deployment sid-deployment --replicas=2
 ```
+
+Update the Deployment: Update the nginx version to nginx:1.19 This will trigger a rolling update.
+```bash
+kubectl set image deployment/nginx-deployment nginx=nginx:1.19
+```
+
+Check the Rollout Status
+```bash
+kubectl rollout status deployment/nginx-deploymen
+```
+
+Rollback the Update
+```bash
+kubectl rollout undo deployment/nginx-deployment
+```
