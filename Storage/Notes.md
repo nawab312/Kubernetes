@@ -42,3 +42,17 @@ spec:
 - Storage Classes enable dynamic provisioning of PVs. Different storage backends (like AWS EBS, GCP Persistent Disks, etc.) can have their own StorageClass configurations.
 - `provisioner`: The plugin used to provision storage (e.g., kubernetes.io/aws-ebs).
 - `parameters`: Backend-specific configurations like volume type or IOPS.
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast-storage
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+  fsType: ext4
+```
+
+**What is the difference between static and dynamic provisioning of Persistent Volumes**
+
+*Static provisioning* of Persistent Volumes (PVs) involves manually creating PVs ahead of time by the administrator, with the user requesting a Persistent Volume Claim (PVC) that matches the predefined PV. In *dynamic provisioning*, Kubernetes automatically creates PVs based on PVCs when a request is made, without requiring predefined PVs. Dynamic provisioning is more flexible and scalable, while static provisioning offers more control and predictability.
