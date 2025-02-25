@@ -18,7 +18,10 @@ spec:
   hostPath:
     path: "/mnt/data"
 ```
-- accessModes: ReadWriteOnce - Specifies that only one pod can access the PV at a time.
+- accessModes:
+    - **ReadWriteOnce** - The volume can be mounted as read-write by only one pod at a time. Even if multiple Pods are on the same node, only one Pod can write to the volume.
+    - **ReadOnlyMany** - The volume can be mounted as read-only by multiple nodes simultaneously.
+    - **ReadWriteMany** - The volume can be mounted as read-write by multiple nodes simultaneously. You have an application where multiple Pods write logs to the same shared volume.
 - persistentVolumeReclaimPolicy:
   - **Retain** - Determines what happens to the PV when the pod using it is deleted. In this case, the PV is retained and not automatically deleted.
   - **Delete** - Automatically deletes the underlying storage resource (e.g., an EBS volume) when the PV is released.
