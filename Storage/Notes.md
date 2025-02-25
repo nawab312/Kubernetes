@@ -28,6 +28,7 @@ spec:
 ### Persistent Volume Claims (PVC) ###
 - A Persistent Volume Claim is a request for storage by a user. Pods use PVCs to access a Persistent Volume.
 - PVCs allow dynamic or manual binding to PVs. Ensures Pods get the right storage with the required access modes.
+- `PVC binds to a PV`, it means that the PVC has successfully requested and matched a specific PV with the appropriate storage resources.
 ```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -59,3 +60,6 @@ parameters:
 **What is the difference between static and dynamic provisioning of Persistent Volumes**
 
 *Static provisioning* of Persistent Volumes (PVs) involves manually creating PVs ahead of time by the administrator, with the user requesting a Persistent Volume Claim (PVC) that matches the predefined PV. In *dynamic provisioning*, Kubernetes automatically creates PVs based on PVCs when a request is made, without requiring predefined PVs. Dynamic provisioning is more flexible and scalable, while static provisioning offers more control and predictability.
+
+`PVC in one namespace cannot bind to a PV in another namespaceNo. PVs are cluster-wide resources, but PVCs are namespace-scoped. A PVC can only bind to a PV in the same namespace or one without any namespace restrictions```
+
