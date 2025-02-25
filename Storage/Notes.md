@@ -37,3 +37,8 @@ spec:
     requests:
       storage: 1Gi
 ```
+
+### Kubernetes Storage Class ###
+- Storage Classes enable dynamic provisioning of PVs. Different storage backends (like AWS EBS, GCP Persistent Disks, etc.) can have their own StorageClass configurations.
+- `provisioner`: The plugin used to provision storage (e.g., kubernetes.io/aws-ebs).
+- `parameters`: Backend-specific configurations like volume type or IOPS.
