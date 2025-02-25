@@ -19,7 +19,10 @@ spec:
     path: "/mnt/data"
 ```
 - accessModes: ReadWriteOnce - Specifies that only one pod can access the PV at a time.
-- persistentVolumeReclaimPolicy: Retain - Determines what happens to the PV when the pod using it is deleted. In this case, the PV is retained and not automatically deleted.
+- persistentVolumeReclaimPolicy:
+  - **Retain** - Determines what happens to the PV when the pod using it is deleted. In this case, the PV is retained and not automatically deleted.
+  - **Delete** - Automatically deletes the underlying storage resource (e.g., an EBS volume) when the PV is released.
+  - **Recycle** - Clears the PV's contents by running a basic rm -rf command on the volume, making it reusable for another PVC.
 - hostPath: path: "/mnt/data" - A hostPath volume type allows you to mount a host directory onto a Pod. This means you're directly exposing a specific directory from the underlying host machine's filesystem into your Pod.
 
 ### Persistent Volume Claims (PVC) ###
