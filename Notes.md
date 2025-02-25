@@ -63,7 +63,35 @@ A Node is a physical or virtual machine in the Kubernetes cluster that runs the 
     - Pods in a DaemonSet are not scheduled based on normal Deployment behavior (replica scaling); they are scheduled based on the availability of nodes.
  
 **Storage in Kubernetes** https://github.com/nawab312/Kubernetes/blob/main/Storage/Notes.md
+
 **Services** https://github.com/nawab312/Kubernetes/blob/main/Services/Notes.md
+
+### ConfigMaps and Secrets ###
+
+**ConfigMaps**
+- A Kubernetes object used to store non-sensitive configuration data in key-value pairs
+- Use Cases: Application settings (e.g., environment variables). File-based configurations (e.g., .properties or .json files)
+- ConfigMaps are mounted into Pods as: Environment variables, Command-line arguments, Volumes (files in a directory).
+
+**Secrets**
+- Kubernetes objects to securely store sensitive information such as passwords, tokens, or certificates. Data is encoded using Base64.
+- Types of Secrets:
+    - Opaque: Default type for arbitrary data.
+    - TLS: Used to store TLS certificates and keys.
+- Secrets can be accessed by Pods as: Environment variables, Mounted volumes.
+
+
+### Application Lifecycle Management ###
+Probe (Probe Means: To test Behaviour of System) Mechanisms:
+- HTTP Probes: Sends an HTTP GET request to a specified endpoint.
+- TCP Probes: Tries to establish a TCP connection.
+- Command Probes: Executes a specified command inside the container.
+
+- **Liveness Probe:** Determines if the application inside a Pod is still running. If the probe fails, Kubernetes restarts the container. Common scenarios: Application crashes or enters a deadlock state, Recovering from temporary issues. Liveness probe sends HTTP GET requests to the container's endpoint internally, using the kubelet, which runs on the worker node hosting the container. A 2xx or 3xx HTTP response indicates the container is healthy.
+- **Readiness Probe:** Determines if the application inside a Pod is ready to serve traffic. If the probe fails, the Pod is removed from the Service's endpoints. Common scenarios: Application initialization takes time. External dependencies (e.g., database) are not ready yet.
+
+
+
 
 
 
