@@ -42,6 +42,25 @@ spec:
       storage: 1Gi
 ```
 
+**storageClassName** field in a PVC specifies which StorageClass Kubernetes should use to dynamically provision a PV or match an existing one.
+- Dynamic Provisioning: When a PVC includes storageClassName, Kubernetes will use the corresponding StorageClass to dynamically create a Persistent Volume that meets the PVC's requirements.
+- Static Binding: If the cluster administrator has pre-created PVs, the storageClassName ensures that the PVC only binds to PVs with a matching storageClassName
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard
+```
+
+- If `storageClassName: ""` This means do not use dynamic provisioning. Instead, the PVC will only bind to an existing PV.
+
 ### Kubernetes Storage Class ###
 - Storage Classes enable dynamic provisioning of PVs. Different storage backends (like AWS EBS, GCP Persistent Disks, etc.) can have their own StorageClass configurations.
 - `provisioner`: The plugin used to provision storage (e.g., kubernetes.io/aws-ebs).
