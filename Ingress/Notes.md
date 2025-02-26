@@ -43,5 +43,9 @@ data:
 #https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/configmap-resource/
 ```
 
+**Network Policy**
+- A Network Policy is a Kubernetes object that controls traffic flow to/from Pods based on rules.
+- By default, all traffic is allowed between Pods in a cluster. Network Policies restrict unwanted traffic.
+- Define allow or deny rules for ingress and egress traffic.
 
 
