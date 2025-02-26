@@ -147,6 +147,8 @@ spec:
       image: tensorflow:latest
 ```
 
+**Ingress** https://github.com/nawab312/Kubernetes/blob/main/Ingress/Notes.md
+
 
 
 
