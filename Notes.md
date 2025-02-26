@@ -149,6 +149,8 @@ spec:
 
 **Ingress** https://github.com/nawab312/Kubernetes/blob/main/Ingress/Notes.md
 
+**Statefuleset** https://github.com/nawab312/Kubernetes/blob/main/StatefuleSet/Notes.md
+
 
 
 
