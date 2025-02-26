@@ -88,5 +88,5 @@ spec:
             port:
               number: 80
 ```
-Solution: https://github.com/nawab312/Kubernetes/blob/main/Ingress/ingress-path-matching.yaml
+Solution: https://github.com/nawab312/Kubernetes/blob/main/Ingress/Ingress_Resource/Ingress_Resource1.yaml
 
