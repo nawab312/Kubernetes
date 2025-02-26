@@ -111,9 +111,41 @@ readinessProbe:
     periosdSeconds: 5
 ```
 
+### Kubernetes Scheduling ###
 
+**Resource Requests and Limits**
+- Resource Requests:
+    - Specify the minimum amount of CPU and memory a Pod needs to run.
+    - The scheduler ensures the node has at least the requested resources available
+- Resource Limits:
+    - Specify the maximum amount of CPU and memory a Pod can use.
+    - Prevents a Pod from monopolizing resources.
+https://github.com/nawab312/Kubernetes/blob/main/Pods/Pod-1.yaml
 
+**Node Affinity & Anti-Affinity**
+- Node Affinity: A way to specify which nodes a Pod prefers to run on based on node labels.
+- Node Anti-Affinity: Opposite of affinity; ensures Pods are scheduled on separate nodes, useful for high availability.
+https://github.com/nawab312/Kubernetes/blob/main/Pods/Pod-2.yaml
 
+**Taints and Tolerations**
+- A taint is a way to mark a node so that only certain Pods can be scheduled on it.
+- `kubectl taint nodes node1 gpu=true:NoSchedule` Only Pods that tolerate the gpu=true taint can be scheduled on node1.
+- A toleration is a way for a Pod to indicate that it can tolerate (or accept) a specific taint on a node.
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myPod
+spec:
+  tolerations:
+    - key: "gpu"
+      operator: "equal"
+      value: "true"
+      effect: "NoSchedule"
+  containers:
+    - name: tensorflow
+      image: tensorflow:latest
+```
 
 
 
