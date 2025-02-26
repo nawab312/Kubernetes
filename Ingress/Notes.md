@@ -16,6 +16,13 @@ The need for Ingress in Kubernetes arose primarily to address the challenges of 
 *The Ingress controller handles the external routing, while within each service, Kubernetes uses a service to load balance between multiple pods. So, if a service has multiple pods, Kubernetes automatically distributes traffic among them.
 For example, if you have a service with three replicas (pods), Kubernetes will round-robin the traffic among those pods. The Ingress controller doesn’t have to worry about that part — it just ensures that the traffic gets directed to the correct service, and Kubernetes handles the internal load balancing within the service.*
 
+**Annotations in Ingress**
+- Annotations in an Ingress resource in Kubernetes are used to provide additional configuration or metadata that can control the behavior of the Ingress Controller 
+- Unlike regular fields in an Ingress definition (such as `spec.rules` or `spec.backend`), annotations are typically used to specify configuration options that are specific to the Ingress Controller.
+- `nginx.ingress.kubernetes.io/ssl-redirect: "true"` Controls whether HTTP traffic is redirected to HTTPS.
+- `nginx.ingress.kubernetes.io/ingress.class: "nginx"` Specifies which Ingress Controller should handle this Ingress.
+- `nginx.ingress.kubernetes.io/load-balancer-method: least_conn` Specifies the load balancing algorithm to use for requests.
+
 **Let’s say we have an EKS cluster with multiple nodes. In this cluster, we have 20 services, each with 5 pods. Now, for each service, we want to implement a least-connection load balancing algorithm to distribute traffic more efficiently. How would you go about setting this up?**
 By default, Kubernetes Services use round-robin load balancing for distributing traffic across pods. However, Kubernetes doesn't provide a built-in option for least-connection load balancing at the Service level.
 - Using an External Load Balancer: We could start by using a load balancer outside the Kubernetes cluster (like AWS ALB (Application Load Balancer) or NGINX) that routes traffic to the Ingress controller.
