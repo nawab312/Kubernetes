@@ -16,5 +16,25 @@ The need for Ingress in Kubernetes arose primarily to address the challenges of 
 *The Ingress controller handles the external routing, while within each service, Kubernetes uses a service to load balance between multiple pods. So, if a service has multiple pods, Kubernetes automatically distributes traffic among them.
 For example, if you have a service with three replicas (pods), Kubernetes will round-robin the traffic among those pods. The Ingress controller doesn’t have to worry about that part — it just ensures that the traffic gets directed to the correct service, and Kubernetes handles the internal load balancing within the service.*
 
+**Let’s say we have an EKS cluster with multiple nodes. In this cluster, we have 20 services, each with 5 pods. Now, for each service, we want to implement a least-connection load balancing algorithm to distribute traffic more efficiently. How would you go about setting this up?**
+By default, Kubernetes Services use round-robin load balancing for distributing traffic across pods. However, Kubernetes doesn't provide a built-in option for least-connection load balancing at the Service level.
+- Using an External Load Balancer: We could start by using a load balancer outside the Kubernetes cluster (like AWS ALB (Application Load Balancer) or NGINX) that routes traffic to the Ingress controller.
+- Choosing the Right Ingress Controller: For least-connection load balancing at the pod level, we should choose an Ingress controller that supports this algorithm. One such controller is NGINX
+- First, we need to deploy the NGINX Ingress controller in the cluster. We can do this by using Helm or kubectl. `helm install nginx-ingress ingress-nginx/ingress-nginx --set controller.ingressClass=nginx --set controller.replicaCount=2`
+- Once the NGINX Ingress controller is deployed, we can configure it to use the least-connection load balancing algorithm. This can be done by editing the ConfigMap of the NGINX Ingress controller.
+- `kubectl edit configmap nginx-ingress-controller -n ingress-nginx`
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-ingress-controller
+  namespace: nginx-ingress
+data:
+  enable-ssl-passthrough: "true"
+  lb-method: least_conn
+
+#https://docs.nginx.com/nginx-ingress-controller/configuration/global-configuration/configmap-resource/
+```
+
 
 
