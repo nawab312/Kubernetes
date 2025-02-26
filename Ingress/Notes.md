@@ -1,4 +1,4 @@
-The need for Ingress in Kubernetes arose primarily to address the challenges of managing external access to services running inside a Kubernetes cluster. Before Ingress, there were a few common methods to expose services, like using NodePort or LoadBalancer resources. 
+![image](https://github.com/user-attachments/assets/2d6357c0-fa2f-4951-ab18-bf25d86632fe)The need for Ingress in Kubernetes arose primarily to address the challenges of managing external access to services running inside a Kubernetes cluster. Before Ingress, there were a few common methods to expose services, like using NodePort or LoadBalancer resources. 
 - NodePort: This opens a specific port on each node in the cluster. It means exposing each service on a unique port, which can quickly become messy when there are multiple services, and also isn’t scalable.
 - LoadBalancer: This requires setting up a *separate external load balancer for each service*. This approach can be costly, particularly in cloud environments where each load balancer comes with a fee.
 ![Ingress1](https://github.com/nawab312/Kubernetes/blob/main/Images/Ingress1.png)
@@ -47,5 +47,46 @@ data:
 - A Network Policy is a Kubernetes object that controls traffic flow to/from Pods based on rules.
 - By default, all traffic is allowed between Pods in a cluster. Network Policies restrict unwanted traffic.
 - Define allow or deny rules for ingress and egress traffic.
+https://github.com/nawab312/Kubernetes/tree/main/Ingress/NetworkPolcy/NetworkPolicy1
 
+**Kubernetes does not allow overlapping Ingress rules with the same path (/app) and host (example.com) but different pathType values (Exact vs Prefix).**
+```yaml
+# Ingress Rule 1: Exact path matching
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-exact
+spec:
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - path: /app
+        pathType: Exact
+        backend:
+          service:
+            name: exact-service
+            port:
+              number: 80
+```
+```yaml
+# Ingress Rule 2: Prefix path matching
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-prefix
+spec:
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - path: /app
+        pathType: Prefix
+        backend:
+          service:
+            name: prefix-service
+            port:
+              number: 80
+```
+Solution: https://github.com/nawab312/Kubernetes/blob/main/Ingress/ingress-path-matching.yaml
 
