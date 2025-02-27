@@ -39,7 +39,7 @@ kubectl set image deployment/nginx-deployment nginx=nginx:1.19
 
 Check the Rollout Status
 ```bash
-kubectl rollout status deployment/nginx-deploymen
+kubectl rollout status deployment/nginx-deployment
 ```
 
 Rollback the Update
