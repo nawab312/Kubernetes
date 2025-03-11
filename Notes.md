@@ -152,6 +152,8 @@ spec:
 
 **Statefuleset** https://github.com/nawab312/Kubernetes/blob/main/StatefuleSet/Notes.md
 
+**Scaling in Kubernetes** https://github.com/nawab312/Kubernetes/blob/main/HPA/Notes.md
+
 
 
 
