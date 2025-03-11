@@ -33,7 +33,7 @@ spec:
     pod/post-delete-kibana-kibana-4cbkf   0/2     Init:0/1   0          5m31s
     job.batch/post-delete-kibana-kibana   Running   0/1           10m        10m
     ```
-  - Delete the Underlying Controller, Here it is the *Job *
+  - Delete the Underlying Controller, Here it is the *Job*
     - Kubernetes Jobs are designed to run to completion.
     - Some Helm charts use pre-delete or post-delete hooks to run cleanup jobs.
     - The presence of `post-delete-kibana-kibana` suggests that it is part of a Helm hook.
