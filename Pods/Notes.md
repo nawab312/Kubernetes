@@ -19,3 +19,8 @@ spec:
   - name: my-container
     image: my-batch-job
 ```
+
+- What happens if there are not enough resources to schedule a pod?
+  - Pod is Unschedulable: The Kubernetes scheduler will attempt to find a node with enough resources (CPU, memory, etc.) to accommodate the Pod. If no suitable node is found, the Pod remains in the "Pending" state.
+  - Retry Mechanism: Kubernetes continuously retries scheduling the Pod, waiting for resources to free up or for new nodes to be added to the cluster.
+  - Cluster Autoscaler (if enabled): If Cluster Autoscaler is configured, Kubernetes can automatically provision new nodes to handle the resource demand. Once new nodes are available, the Pod is scheduled.
