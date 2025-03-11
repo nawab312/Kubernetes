@@ -23,6 +23,12 @@ spec:
       port: 80 #PORT EXPOSED BY SERVICE
       targetPort: 8080 #PORT EXPOSED IN THE POD/CONTAINER
 ```
+- How does network flow when a client hits clusterIP Service?
+  - Client Request: The client sends a request to the ClusterIP of the Service. This is a virtual IP assigned by Kubernetes, which abstracts the underlying Pods.
+  - *kube-proxy*: The kube-proxy running on each node intercepts the request. It uses `iptables` or `IPVS rules` to forward the request to one of the Pods that match the Service's label selector.
+  - Pod Selection: kube-proxy performs load balancing and chooses a Pod based on round-robin (or another policy). The request is routed to the selected Pod's IP and port.
+  - Pod Response: The Pod processes the request and sends the response back to the client. The response flows through the same network path, using the Pod's IP to communicate back.
+
 
 ### NodePort ###
 - Exposes the Service on a static port `(30000-32767)` on each Node’s IP. External traffic can access the application via `NodeIP>:<NodePort>`
