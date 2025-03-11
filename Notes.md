@@ -52,6 +52,7 @@ A Node is a physical or virtual machine in the Kubernetes cluster that runs the 
 - **Pod:** A Pod is the smallest and simplest unit in Kubernetes. It encapsulates one or more containers that share storage and network resources. Containers in the same Pod are *tightly coupled* and run on the *same node*. A Pod may contain
     - Single Container Pod: A single container inside the Pod.
     - Multi-container Pod: Multiple containers inside the same Pod, which are closely related and share the same environment (network, storage).
+    - https://github.com/nawab312/Kubernetes/blob/main/Pods/Notes.md
 - **Service:** Service is an abstraction that defines a logical set of Pods and a policy by which to access them. It provides a stable endpoint (usually a DNS name) to access a group of Pods, even though the Pods themselves might be dynamically created, destroyed, or replaced.
 - **ReplicaSets:** A ReplicaSet ensures that a specified number of replicas (Pods) of a containerized application are running at all times. If a Pod crashes or is deleted, the ReplicaSet will create a new Pod to replace it, maintaining the desired number of Pod
 - **Deployment** is a higher-level object that manages ReplicaSets and Pods. It provides declarative updates to applications, meaning you can define the desired state of your application, and Kubernetes will work to ensure that the system converges to that state. Key Features:
