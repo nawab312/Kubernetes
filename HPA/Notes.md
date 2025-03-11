@@ -1,0 +1,8 @@
+- **HPA** Automatically scales the number of Pods in a Deployment, ReplicaSet, or StatefulSet based on observed metrics like CPU/memory usage or custom application metrics.
+- **VPA** Automatically adjusts *resource requests and limits* for containers in a Pod to optimize resource usage. How It Works:
+  - Monitors actual resource usage over time
+  - Recommends or directly applies changes to resource requests and limits.
+  - Can operate in three modes: 
+    - *Off*: Only Provide Recommendations
+    - *Auto*: Automatically update resource requests and limits
+    - *Initial*: Set the requests and limits at pod creation
