@@ -53,3 +53,38 @@
       as: "memory_usage"
     metricsQuery: 'container_memory_usage_bytes{pod!="",namespace!=""}'
   ```
+  After editing the ConfigMap, restart the Prometheus Adapter:
+  ```bash
+  kubeclt delete pod -l app=prometheus-adapter -n monitoring
+  ```
+
+- Create HPA Using Prometheus CPU & Memory Metrics
+  ```yaml
+  apiVersion: autoscaling/v2
+  kind: HorizontalPodAutoscaler
+  metadata:
+    name: my-app-hpa
+  spec:
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: my-app
+    minReplicas: 2
+    maxReplicas: 20
+    metrics:
+    - type: Pods
+      pods:
+        metric:
+          name: cpu_usage  # Custom Prometheus CPU metric
+        target:
+          type: AverageValue
+          averageValue: 500m  # Scale if CPU > 500m (0.5 core)
+
+    - type: Pods
+      pods:
+        metric:
+          name: memory_usage  # Custom Prometheus Memory metric
+        target:
+          type: AverageValue
+          averageValue: 500Mi  # Scale if memory > 500Mi
+    ```
