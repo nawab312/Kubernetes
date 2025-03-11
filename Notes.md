@@ -154,6 +154,8 @@ spec:
 
 **Scaling in Kubernetes** https://github.com/nawab312/Kubernetes/blob/main/HPA/Notes.md
 
+**Common Errors in Kubernetes** https://github.com/nawab312/Kubernetes/blob/main/Common_Errors.md
+
 
 
 
