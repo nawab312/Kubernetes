@@ -97,11 +97,13 @@ A Node is a physical or virtual machine in the Kubernetes cluster that runs the 
 - ConfigMaps are mounted into Pods as: Environment variables, Command-line arguments, Volumes (files in a directory).
 
 **Secrets**
-- Kubernetes objects to securely store sensitive information such as passwords, tokens, or certificates. Data is encoded using Base64.
+- Kubernetes objects to securely store sensitive information such as passwords, tokens, or certificates. Data is encoded using Base64 *(not encrypted by default)*.
 - Types of Secrets:
     - Opaque: Default type for arbitrary data.
     - TLS: Used to store TLS certificates and keys.
 - Secrets can be accessed by Pods as: Environment variables, Mounted volumes.
+- Example: https://github.com/nawab312/Kubernetes/blob/main/ConfigMap_Secrets/Secret1.md
+- Kubernetes Secrets are stored in etcd, but by default, they are only base64-encoded, not encrypted. This means anyone with access to etcd storage can read sensitive data like passwords and API keys. To enhance security, Kubernetes provides Encryption at Rest, which encrypts Secrets before storing them in etcd.  How to do: https://github.com/nawab312/Kubernetes/blob/main/ConfigMap_Secrets/Secret2.md
 
 
 ### Application Lifecycle Management ###
