@@ -154,6 +154,8 @@ spec:
 
 **Scaling in Kubernetes** https://github.com/nawab312/Kubernetes/blob/main/HPA/Notes.md
 
+**SSL Certificates in Kubernetes** https://github.com/nawab312/Kubernetes/blob/main/SSLCertificate_Kubernetes.md
+
 **Common Errors in Kubernetes** https://github.com/nawab312/Kubernetes/blob/main/Common_Errors.md
 
 
