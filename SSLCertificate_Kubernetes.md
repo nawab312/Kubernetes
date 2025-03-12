@@ -7,6 +7,21 @@ Your company is running a microservices-based application in Kubernetes. You hav
 - You should automate the renewal of the SSL certificate.
 - The Load Balancer should handle SSL termination.
 
+**Request Flow for SSL Traffic Through a Load Balancer in Kubernetes**
+- **Client (Browser or API Consumer) → Load Balancer**
+  - The client makes an HTTPS request: `https://backend.example.com`
+  - The request is routed to the Kubernetes Load Balancer (e.g., AWS ELB, Azure LB, or GCP LB).
+  - The Load Balancer has an SSL certificate attached to it.
+- **Load Balancer (SSL Termination) → Kubernetes Service (backend-svc)**
+  - The Load Balancer decrypts the HTTPS request and converts it into plain HTTP.
+  - The decrypted request is forwarded to the backend-svc inside the Kubernetes cluster on port 80.
+- **Kubernetes Service (backend-svc) → NGINX Pod**
+  - The backend-svc routes the request to one of the running NGINX pods based on its internal load balancing (Round Robin by default).
+  - The request is received by the NGINX pod on port 80.
+- **NGINX Pod → Application**
+  - The NGINX pod processes the request and forwards it to the application.
+  - The application processes the request and sends the response back.
+
 **How will you generate and store an SSL certificate in Kubernetes?**
 - Generate a self-signed SSL certificate (if not using a third-party certificate authority like Let's Encrypt):
   ```bash
