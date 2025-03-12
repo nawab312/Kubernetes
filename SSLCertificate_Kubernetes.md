@@ -91,14 +91,13 @@ Distributing a Self-Signed Certificate Securely
     - For Linux/macOS:
       ```bash
       sudo cp tls.crt /usr/local/share/ca-certificates/self-signed.crt
-        sudo update-ca-certificates  # (For Debian-based systems)
-    ```
+      sudo update-ca-certificates  # (For Debian-based systems)
+      ```
     - For Browsers (Firefox, Chrome, Edge):
       - Open Settings → Security → Manage Certificates → Import `tls.crt`.
   - Configure Applications to Trust the Certificate
     - For Docker Containers: Mount the certificate inside the container and update CA certificates:
-      ```bash
     - For Kubernetes Pods: Mount the certificate as a ConfigMap or Secret and inject it into pods.
 
-- Never share the private key (tls.key)—only distribute the certificate (tls.crt).
+- Never share the private key (`tls.key`)—only distribute the certificate (`tls.crt`).
     
