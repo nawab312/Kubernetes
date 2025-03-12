@@ -55,6 +55,7 @@ A Node is a physical or virtual machine in the Kubernetes cluster that runs the 
     - Service Abstraction: Kubernetes services (like ClusterIP, NodePort, LoadBalancer, etc.) abstract away the complexity of communicating with individual Pods by providing a stable IP and DNS name. The Kube-Proxy helps route traffic to the correct Pod(s) behind a Service
     - Network Routing: The Kube-Proxy handles the routing of network requests from external clients or other Pods to the correct destination Pods. It uses iptables or IPVS (depending on the implementation) to manage the network rules and direct traffic
     - Load Balancing: It also performs basic load balancing. When there are multiple Pods behind a Service, the Kube-Proxy will distribute traffic across these Pods in a round-robin fashion.
+      
 - **Container Runtime (Docker, containerd):** The container runtime is the software responsible for running the containers. Docker was the initial choice for Kubernetes, but it now supports other runtimes like containerd and CRI-O.
 
 ### Key Concepts in Kubernetes ###
@@ -77,6 +78,16 @@ A Node is a physical or virtual machine in the Kubernetes cluster that runs the 
 **Storage in Kubernetes** https://github.com/nawab312/Kubernetes/blob/main/Storage/Notes.md
 
 **Services** https://github.com/nawab312/Kubernetes/blob/main/Services/Notes.md
+
+**DNS resolution inside a cluster**
+- Kubernetes Uses *CoreDNS* for Internal DNS
+    - Kubernetes automatically assigns DNS names to *Services and Pods*.
+    - CoreDNS (or kube-dns) runs as a *Deployment* inside the cluster.
+- Service DNS Resolution
+    - Every Service gets a DNS name in the format: `<service-name>.<namespace>.svc.cluster.local`
+ - Pod DNS Resolution
+    - If a Pod needs to communicate with another Pod in the same Service, it can use the Service name.
+    - If DNS policies allow it, a Pod can also resolve other Pods using: `<pod-ip>.<namespace>.pod.cluster.local`
 
 ### ConfigMaps and Secrets ###
 
@@ -172,6 +183,10 @@ spec:
 **SSL Certificates in Kubernetes** https://github.com/nawab312/Kubernetes/blob/main/SSLCertificate_Kubernetes.md
 
 **Common Errors in Kubernetes** https://github.com/nawab312/Kubernetes/blob/main/Common_Errors.md
+
+- Difference between `kubectl apply`, `kubectl create`, `kubectl replace`
+![image](https://github.com/user-attachments/assets/e2771329-33be-446f-ad3e-74de10812595)
+
 
 
 
