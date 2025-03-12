@@ -38,4 +38,25 @@ spec:
     - Some Helm charts use pre-delete or post-delete hooks to run cleanup jobs.
     - The presence of `post-delete-kibana-kibana` suggests that it is part of a Helm hook.
   - Delete the Running Job `kubectl delete job post-delete-kibana-kibana`
+ 
+  **There are three main types of containers used in a Pod**
+  - **Main (or Application) Container**
+    - This is the primary container that runs the main application logic.
+    - Typically, a Pod will have one main container, but multi-container Pods are possible.
+    - Example: A container running a web server like NGINX or Spring Boot application.
+  - **Init Containers**
+    - These are special containers that *run before the main container starts*.
+    - They are used for initialization tasks such as:
+      - Setting up configurations.
+      - Ensuring dependencies are available.
+      - Performing database migrations.
+    - Each Init container must complete successfully before the main container starts.
+    - Example: A container that waits for a database to become available before starting the application.
+  - **Sidecar Containers**
+    - These containers *run alongside the main container* and provide additional functionality.
+    - Common use cases:
+      - Logging and monitoring (e.g., Fluentd, Logstash).
+      - Service mesh proxies (e.g., Envoy for Istio).
+      - Security (e.g., authentication sidecars).
+    - Example: A Fluentd container that collects logs from the main application container and ships them to Elasticsearch.
 
