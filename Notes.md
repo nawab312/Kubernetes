@@ -15,6 +15,17 @@ Kubernetes operates in a master-slave architecture, where the Master controls an
 ### Master Components ###
 The Master node is responsible for for managing the *overall cluster state*, *scheduling applications*, and ensuring that the *desired state of the system* is maintained. The key components of the master node include
 - **API Server (kube-apiserver):** is the entry point for all API requests. It exposes Kubernetes APIs and is responsible for handling all the internal and external requests for the cluster. It validates and processes REST requests, updates etcd, and sends commands to the other components.
+    - What Happens If the API Server Goes Down?
+        - Existing Pods Keep Running: Pods that are already scheduled on worker nodes continue running because the Kubelet and container runtime (e.g., Docker, containerd) manage them independently.
+        - Service-to-Service Communication Continues
+          - Cluster networking (CNI plugins) still functions, allowing Pods to communicate.
+          - Service Discovery (CoreDNS) continues to resolve Service names.
+        - Kubelets and Nodes Continue Operating
+          - Nodes do not immediately stop working, as Kubelet and kube-proxy function without direct API server access.
+          - If a Pod crashes, Kubelet restarts it using the local container runtime.
+        - kubectl and API Requests Fail: Commands like `kubectl get pods` or `kubectl apply -f` fail because the API server is down.
+        - New Pods Cannot Be Scheduled: The Scheduler depends on the API server. If a new Pod is created, it won't be scheduled until the API server is restored.
+          
 - **Controller Manager:** runs controllers that regulate the state of the cluster. These controllers ensure that the current state of the system matches the desired state. Examples of controllers are:
     - Replication Controller: Ensures that the desired number of pod replicas are running
     - Node Controller: Manages node status, including adding or removing nodes
@@ -114,7 +125,7 @@ readinessProbe:
 - What will happen if a Pod has a Readiness Probe that always fails, but its liveness probe always passes?
     - Pod Will Never Receive Traffic: If Readiness Probe always fails, the Pod is never added to the *Endpoints* list of its Service.
     - Pod Will Keep Running: Since Liveness Probe always passes, Kubernetes assumes the container is healthy and does not restart it.
-    - Liveness Probe: If this Pod is part of a Deployment, the rolling update may get stuck because Kubernetes waits for the new Pod to become "Ready" before terminating the old one.
+    - Rolling Update: If this Pod is part of a Deployment, the rolling update may get stuck because Kubernetes waits for the new Pod to become "Ready" before terminating the old one.
 
 ### Kubernetes Scheduling ###
 
