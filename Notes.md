@@ -175,6 +175,8 @@ spec:
     - name: tensorflow
       image: tensorflow:latest
 ```
+![image](https://github.com/user-attachments/assets/6466be37-1dea-4296-aac6-2bcab920e105)
+
 
 **Ingress** https://github.com/nawab312/Kubernetes/blob/main/Ingress/Notes.md
 
