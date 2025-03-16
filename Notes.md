@@ -39,9 +39,9 @@ The Master node is responsible for for managing the *overall cluster state*, *sc
       - *Kubelet*: Once a node is assigned, the API server sends an update to the kubelet on that node to pull the image and start the container.
           
 - **Controller Manager:** Runs controllers that regulate the state of the cluster. These controllers ensure that the current state of the system matches the desired state. Examples of controllers are:
-    - Replication Controller: Ensures that the desired number of pod replicas are running
-    - Node Controller: Manages node status, including adding or removing nodes
-    - Job Controller: Ensures that jobs are completed successfully
+    - *Replication Controller*: Ensures that the desired number of pod replicas are running
+    - *Node Controller*: Manages node status, including adding or removing nodes
+    - *Job Controller*: Ensures that jobs are completed successfully
  
     - How Controllers Work?
       - Let’s go through an example where a *ReplicaSet controller* ensures that the desired number of pods are running.
