@@ -38,10 +38,27 @@ The Master node is responsible for for managing the *overall cluster state*, *sc
       - *Controller Manager*: The API server updates the ReplicaSet or Deployment controllers if needed.
       - *Kubelet*: Once a node is assigned, the API server sends an update to the kubelet on that node to pull the image and start the container.
           
-- **Controller Manager:** runs controllers that regulate the state of the cluster. These controllers ensure that the current state of the system matches the desired state. Examples of controllers are:
+- **Controller Manager:** Runs controllers that regulate the state of the cluster. These controllers ensure that the current state of the system matches the desired state. Examples of controllers are:
     - Replication Controller: Ensures that the desired number of pod replicas are running
     - Node Controller: Manages node status, including adding or removing nodes
     - Job Controller: Ensures that jobs are completed successfully
+ 
+    - How Controllers Work?
+      - Let’s go through an example where a *ReplicaSet controller* ensures that the desired number of pods are running.
+      - Creating a Deployment: A user runs the following command to create a deployment with *3 replicas*:
+        ```bash
+        kubectl create deployment nginx --image=nginx --replicas=3
+        ```
+      - What Happens Internally?
+        - kubectl Sends Request to API Server. The API Server validates and stores the Deployment definition in *etcd*.
+          ```bash
+          POST /apis/apps/v1/namespaces/default/deployments
+          ```
+        - Deployment Controller in Controller Manager Detects the Change. The *Deployment Controller* notices that the *desired state* is 3 replicas, but currently, there are 0 pods running.
+        - The Deployment Controller creates a *ReplicaSet* to manage the pods.
+        - *ReplicaSet Controller* Ensures Pod Creation. The ReplicaSet Controller compares the desired state (`replicas=3`) with the current state (`0 pods running`). It creates 3 new pods by sending a request to the API Server.
+        - Scheduler Assigns Pods to Nodes. The *API Server* notifies the corresponding kubelet to start the pods.
+
 - **Scheduler (kube-scheduler):** is responsible for assigning Pods to Nodes based on resource availability, constraints, and policies. It monitors the cluster to determine the best nodes for the Pods. If you want to schedule it to a specific node, you can use the `nodeSelector` field.
 ```yaml
 apiVersion: v1
