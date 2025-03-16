@@ -17,18 +17,26 @@ The Master node is responsible for for managing the *overall cluster state*, *sc
 - **API Server (kube-apiserver):** is the entry point for all API requests. It exposes Kubernetes APIs and is responsible for handling all the internal and external requests for the cluster. It validates and processes REST requests, updates etcd, and sends commands to the other components.
   - You can interact with the API server directly using `kubectl`. The `-v=8` flag increases verbosity and shows API calls made to the API server.
     ```bash
-    kubectl get pods -v=8 
+    kubectl get pods -v=8
     ```
-    - What Happens If the API Server Goes Down?
-        - Existing Pods Keep Running: Pods that are already scheduled on worker nodes continue running because the Kubelet and container runtime (e.g., Docker, containerd) manage them independently.
-        - Service-to-Service Communication Continues
-          - Cluster networking (CNI plugins) still functions, allowing Pods to communicate.
-          - Service Discovery (CoreDNS) continues to resolve Service names.
-        - Kubelets and Nodes Continue Operating
-          - Nodes do not immediately stop working, as Kubelet and kube-proxy function without direct API server access.
-          - If a Pod crashes, Kubelet restarts it using the local container runtime.
-        - kubectl and API Requests Fail: Commands like `kubectl get pods` or `kubectl apply -f` fail because the API server is down.
-        - New Pods Cannot Be Scheduled: The Scheduler depends on the API server. If a new Pod is created, it won't be scheduled until the API server is restored.
+  - How kube-apiserver Handles Requests?
+    - Let’s go through an example where a user creates a pod, and the API server processes the request.
+    - User Creates a Pod `kubectl run nginx --image=nginx --restart=Never`
+    - API Request Flow
+      - `kubectl` sends an HTTP POST request to the API server. The request body contains JSON defining the Pod object.
+        ```bash
+        POST /api/v1/namespaces/default/pods
+        ```
+    - API Server Validates and Authenticates
+      - The API server *validates* the request (ensuring correct syntax and required fields).
+      - It *authenticates* the user using Kubernetes RBAC, service accounts, or certificates.
+      - It *authorizes* the action using Role-Based Access Control (RBAC).
+    - API Server Updates etcd
+      - If validation passes, the API server writes the Pod definition into etcd, ensuring it's stored persistently.
+    - API Server Notifies Other Components
+      - *Scheduler*: The API server notifies the scheduler that a new Pod needs a node assignment.
+      - *Controller Manager*: The API server updates the ReplicaSet or Deployment controllers if needed.
+      - *Kubelet*: Once a node is assigned, the API server sends an update to the kubelet on that node to pull the image and start the container.
           
 - **Controller Manager:** runs controllers that regulate the state of the cluster. These controllers ensure that the current state of the system matches the desired state. Examples of controllers are:
     - Replication Controller: Ensures that the desired number of pod replicas are running
