@@ -15,9 +15,9 @@ Kubernetes operates in a master-slave architecture, where the Master controls an
 ### Master Components ###
 The Master node is responsible for for managing the *overall cluster state*, *scheduling applications*, and ensuring that the *desired state of the system* is maintained. The key components of the master node include
 - **API Server (kube-apiserver):** is the entry point for all API requests. It exposes Kubernetes APIs and is responsible for handling all the internal and external requests for the cluster. It validates and processes REST requests, updates etcd, and sends commands to the other components.
-  - You can interact with the API server directly using kubectl
+  - You can interact with the API server directly using `kubectl`. The `-v=8` flag increases verbosity and shows API calls made to the API server.
     ```bash
-    kubectl get pods -v=8 #The -v=8 flag increases verbosity and shows API calls made to the API server.
+    kubectl get pods -v=8 
     ```
     - What Happens If the API Server Goes Down?
         - Existing Pods Keep Running: Pods that are already scheduled on worker nodes continue running because the Kubelet and container runtime (e.g., Docker, containerd) manage them independently.
