@@ -31,7 +31,9 @@ spec:
   - `namespace` The Kubernetes namespace
   - `labels` Tags for the PVC, useful for identifying the PVC across clusters or environments.
 - **spec**
-  - `accessModes` Defines the access modes for the PVC. ReadWriteOnce means the volume can be mounted as read-write by a single node.
+  - `accessModes`
+    - In the PV, the accessModes field defines how the volume can be accessed by the Kubernetes cluster. This is a property of the physical storage resource itself (the volume), and it describes the *capabilities* of the volume based on the underlying storage system.
+    - In the PVC, the accessModes field defines how the user or workload wants to access the volume. It is part of the claim that describes the *desired access mode* for the volume. 
   - `resources.requests.storage`: Defines the requested storage amount. This is set to 50Gi in this case.
   - `storageClassName` Specifies which storage class to use for the PVC. In this example, the fast-storage class is used.
   - `volumeMode` Defines the mode of the volume. It could either be Filesystem (default) or Block
