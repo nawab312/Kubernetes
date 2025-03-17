@@ -26,7 +26,7 @@ spec:
     path: "/mnt/data"
 ```
 - accessModes:
-    - **ReadWriteOnce** - The volume can be mounted as read-write by only one pod at a time. Even if multiple Pods are on the same node, only one Pod can write to the volume.
+    - **ReadWriteOnce** - The volume can be mounted as read-write by only one node at a time. Even if multiple Pods are on the same node, he volume can still be mounted and accessed by all those pods simultaneously on that single node.
     - **ReadOnlyMany** - The volume can be mounted as read-only by multiple nodes simultaneously.
     - **ReadWriteMany** - The volume can be mounted as read-write by multiple nodes simultaneously. You have an application where multiple Pods write logs to the same shared volume.
 - persistentVolumeReclaimPolicy:
