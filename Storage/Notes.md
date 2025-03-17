@@ -91,14 +91,18 @@ parameters:
 
 *Static provisioning* of Persistent Volumes (PVs) involves manually creating PVs ahead of time by the administrator, with the user requesting a Persistent Volume Claim (PVC) that matches the predefined PV. In *dynamic provisioning*, Kubernetes automatically creates PVs based on PVCs when a request is made, without requiring predefined PVs. Dynamic provisioning is more flexible and scalable, while static provisioning offers more control and predictability.
 
-- PVC in one namespace cannot bind to a PV in another namespace. PVs are cluster-wide resources, but PVCs are namespace-scoped. A PVC can only bind to a PV in the same namespace or one without any namespace restrictions.
-  - You are working in a Kubernetes environment where you are tasked with setting up persistent storage for two different applications running in separate namespaces: App1 in the `namespace-app1` and App2 in the `namespace-app2`. You have a Persistent Volume (PV) that is intended to be shared between these applications.
-    - Can a Persistent Volume Claim (PVC) from namespace-app1 bind to the PV if it's located in namespace-app2?
-    - What would you need to do to ensure that App1 and App2 can both use the same PV?
-  - No, a PVC from `namespace-app1` cannot bind to a PV that is located in `namespace-app2`. This is because PVCs are namespace-scoped, meaning a PVC can only bind to a PV that is either:
-    - In the same namespace as the PVC.
-    - A *cluster-wide PV* with no namespace restrictions (i.e., it has no specific namespace set).
-  - To allow both App1 in `namespace-app1` and App2 in `namespace-app2` to use the same Persistent Volume (PV), you would need to create a *cluster-wide PV (a PV with no namespace restrictions)* and make sure that each application has its own PVC within its respective namespace
+**PVC in one namespace cannot bind to a PV in another namespace. PVs are cluster-wide resources, but PVCs are namespace-scoped**
+
+*SCENARIO*
+- You are working in a Kubernetes environment where you are tasked with setting up persistent storage for two different applications running in separate namespaces: App1 in the `namespace-app1` and App2 in the `namespace-app2`. You have a Persistent Volume (PV) that is intended to be shared between these applications.
+  - Can a Persistent Volume Claim (PVC) from namespace-app1 bind to the PV if it's located in namespace-app2?
+  - What would you need to do to ensure that App1 and App2 can both use the same PV?
+
+*SOLUTION*
+- No, a PVC from `namespace-app1` cannot bind to a PV that is located in `namespace-app2`. This is because PVCs are namespace-scoped, meaning a PVC can only bind to a PV that is either:
+  - In the same namespace as the PVC.
+  - A *cluster-wide PV* with no namespace restrictions (i.e., it has no specific namespace set).
+- To allow both App1 in `namespace-app1` and App2 in `namespace-app2` to use the same Persistent Volume (PV), you would need to create a *cluster-wide PV (a PV with no namespace restrictions)* and make sure that each application has its own PVC within its respective namespace
 
 **Handling Volume Expansion for Persistent Volumes**
 - Volume Type: Not all storage types support volume expansion. For example, cloud-based storage solutions such as AWS Elastic Block Store (EBS), Google Persistent Disk (GCE PD), and Azure Disks support expansion. However, traditional storage backends like NFS may require additional steps for expansion.
