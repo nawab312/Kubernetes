@@ -97,6 +97,7 @@ spec:
 - This tells AWS ALB to use SSL termination at the Load Balancer, forwarding HTTP to the backend.
 
 **If your certificate is self-signed, how will you distribute it to clients securely?**
+
 When you use a **self-signed SSL certificate**, it is **not issued by a trusted Certificate Authority (CA)** like Let's Encrypt, DigiCert, or GlobalSign. Because of this, web browsers and clients won't automatically trust the certificate, and they may show a security warning like:
 *"This site’s security certificate is not trusted!"*
 
