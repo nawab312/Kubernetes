@@ -51,6 +51,7 @@ spec:
     requests:
       storage: 1Gi
 ```
+- Example1: https://github.com/nawab312/Kubernetes/blob/main/Storage/PVC/PVC1.md
 
 **storageClassName** field in a PVC specifies which StorageClass Kubernetes should use to dynamically provision a PV or match an existing one.
 - Dynamic Provisioning: When a PVC includes storageClassName, Kubernetes will use the corresponding StorageClass to dynamically create a Persistent Volume that meets the PVC's requirements.
