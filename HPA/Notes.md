@@ -8,7 +8,7 @@
     - *Initial*: Set the requests and limits at pod creation
 
 **How Does HPA Work with Prometheus?**
-- Deploy Prometheus & Prometheus Adapter. Kubernetes does not understand Prometheus metrics by default. **Prometheus Adapter** translates these metrics into Kubernetes Custom Metrics API.
+- Deploy Prometheus & Prometheus Adapter. Kubernetes does not understand Prometheus metrics by default. **Prometheus Adapter** translates these metrics into *Kubernetes Custom Metrics API*.
   ```bash
   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
   helm install prometheus prometheus-community/kube-prometheus-stack -n monitoring
