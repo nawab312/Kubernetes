@@ -17,6 +17,9 @@ HPA continuously monitors the resource utilization of pods and adjusts the numbe
   - Scale Down: If the resource utilization is below the threshold, HPA decreases the number of pod replicas.
 - Apply Changes: Kubernetes adjusts the pod count in the deployment or stateful set.
 
+**What is Metrics Server?**
+Metrics Server is a *lightweight in-cluster* aggregator that collects CPU and memory usage metrics from the *Kubelet* on each node and exposes them through the Kubernetes Metrics API.
+
 **Installing Metrics Server**
 ```bash
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
