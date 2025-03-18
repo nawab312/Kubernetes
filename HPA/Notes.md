@@ -18,23 +18,8 @@ HPA continuously monitors the resource utilization of pods and adjusts the numbe
 - Apply Changes: Kubernetes adjusts the pod count in the deployment or stateful set.
 
 **What is Metrics Server?**
-
-Metrics Server is a *lightweight in-cluster* aggregator that collects CPU and memory usage metrics from the *Kubelet* on each node and exposes them through the Kubernetes Metrics API.
-
-### How Does Metrics Server Collect and Expose Data? ###
-Metrics Server works by communicating with the **Kubelet** on each node, collecting CPU & memory usage data, and exposing it through the **Kubernetes Metrics API**.
-
-**Collecting Metrics from Nodes**
-- Who Provides the Data?
-  - Each Kubernetes *node* runs a *Kubelet*, which continuously monitors the resource usage of all pods running on that node.
--  How Does Metrics Server Get This Data?
-  - Metrics Server sends HTTPS requests to Kubelet's `/stats/summary` API endpoint to fetch CPU & memory usage for pods and nodes. 
-
-**Installing Metrics Server**
-```bash
-kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
-kubectl get apiservices | grep metrics
-```
+- Metrics Server is a *lightweight in-cluster* aggregator that collects CPU and memory usage metrics from the *Kubelet* on each node and exposes them through the Kubernetes Metrics API.
+- https://github.com/nawab312/Kubernetes/blob/main/HPA/Metrics_Server.md
 
 **Basic HPA Example (CPU-based)**
 ```yaml
