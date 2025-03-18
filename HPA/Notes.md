@@ -6,6 +6,56 @@
     - *Off*: Only Provide Recommendations
     - *Auto*: Automatically update resource requests and limits
     - *Initial*: Set the requests and limits at pod creation
+   
+**How Does HPA Work?**
+
+HPA continuously monitors the resource utilization of pods and adjusts the number of replicas accordingly. It uses the *Kubernetes Metrics API* to fetch resource utilization data. HPA Workflow
+- Monitor Metrics: HPA collects metrics (like CPU or memory usage) using the Metrics Server or custom metric providers (like Prometheus).
+- Compare Against Target: It compares the current resource utilization with the target threshold set in the HPA configuration.
+- Scale Up or Down:
+  - Scale Up: If the resource utilization exceeds the threshold, HPA increases the number of pod replicas.
+  - Scale Down: If the resource utilization is below the threshold, HPA decreases the number of pod replicas.
+- Apply Changes: Kubernetes adjusts the pod count in the deployment or stateful set.
+
+**Installing Metrics Server**
+```bash
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+kubectl get apiservices | grep metrics
+```
+
+**Basic HPA Example (CPU-based)**
+```yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-app-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-app
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
+```
+
+**Scaling Based on Memory**
+```yaml
+metrics:
+- type: Resource
+  resource:
+    name: memory
+    target:
+      type: Utilization
+      averageUtilization: 70
+```
+
 
 **How Does HPA Work with Prometheus?**
 - Deploy Prometheus & Prometheus Adapter. Kubernetes does not understand Prometheus metrics by default. **Prometheus Adapter** translates these metrics into *Kubernetes Custom Metrics API*.
