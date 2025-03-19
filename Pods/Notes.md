@@ -59,4 +59,6 @@ spec:
       - Service mesh proxies (e.g., Envoy for Istio).
       - Security (e.g., authentication sidecars).
     - Example: A Fluentd container that collects logs from the main application container and ships them to Elasticsearch.
+   
+**Pod to Pod Communication Across Nodes** https://github.com/nawab312/Kubernetes/blob/main/Pods/Questions/Question1.md
 
