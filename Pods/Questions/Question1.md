@@ -49,6 +49,32 @@ When a pod is deleted or moved to another node, Kubernetes ensures seamless netw
 - Kubernetes DNS Updates the Record
   - If a pod is part of a StatefulSet, it retains a stable hostname.
   - For stateless pods, DNS queries automatically resolve to the new healthy pod.
+ 
+### Pod-to-Pod Communication Across Nodes – Step-by-Step Flow ###
+
+**1. Pod Creation & IP Assignment (CNI)**
+- A new *Pod A* is scheduled on *Node 1*.
+- The *CNI plugin* assigns *Pod A* a unique IP.
+- Networking routes are updated to ensure Pod A can communicate with other pods.
+
+**Pod-to-Pod Communication (CNI Routing)**
+- *Pod A* (Node 1) wants to talk to *Pod B* (Node 2).
+- The CNI plugin on Node 1 *routes or encapsulates* the packet and forwards it to Node 2.
+- The CNI plugin on Node 2 *decapsulates and delivers* the packet to Pod B.
+
+**Service Communication & Load Balancing (kube-proxy)**
+- If *Pod A* contacts *Service B*, it sends traffic to Service B’s *ClusterIP*.
+- *kube-proxy intercepts* and forwards traffic to a healthy pod behind Service B.
+
+**Service Discovery (Kubernetes DNS)**
+- Instead of IPs, *Pod A uses DNS* (e.g., `service-b.default.svc.cluster.local`).
+- Kubernetes DNS resolves it to Service B’s ClusterIP.
+- Traffic flows through kube-proxy to reach an available Pod B.
+
+**Pod Rescheduling & Endpoint Updates**
+- If *Pod B crashes*, a new *Pod B* starts on *Node 3*.
+- *CNI assigns a new IP*, and kube-proxy updates Service B’s *endpoints*.
+- Kubernetes DNS automatically resolves future requests to the new pod.
 
 
 
