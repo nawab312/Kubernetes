@@ -69,3 +69,20 @@ spec:
       port: 80
       targetPort:8080
 ```
+
+### Service Discovery ###
+Kubernetes provides service discovery through its **DNS (Domain Name System)** and **Kubernetes Services** mechanism.
+
+**DNS-Based Discovery:**
+- Each Kubernetes Service gets a DNS name within the cluster (e.g., `my-service.default.svc.cluster.local`).
+- When a pod wants to communicate with a service, it simply uses the service's DNS name, and Kubernetes resolves this to the appropriate set of pods backing the service.
+- The DNS server within the cluster is managed by *CoreDNS* (or kube-dns in earlier versions), which provides internal name resolution.
+
+**Service Abstraction:**
+- A Kubernetes Service acts as a stable endpoint for a set of pods, abstracting away the actual pod IPs (which can change over time due to scaling or pod restarts).
+- Kubernetes keeps track of the available pods for each service through labels and selectors, ensuring the service always points to the right set of pods.
+
+### Internal Load Balancing ###
+- Kubernetes Service (ClusterIP) uses **iptables** or **IPVS** (depending on configuration) for load balancing traffic among the pods that back the service.
+- The traffic is evenly distributed using methods like round-robin or least connections (depending on the implementation).
+- **kube-proxy** manages the **iptables rules** that handle routing traffic to the appropriate pod, ensuring load balancing at the internal service level.
