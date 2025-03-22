@@ -108,16 +108,6 @@ A Node is a physical or virtual machine in the Kubernetes cluster that runs the 
 
 **Services** https://github.com/nawab312/Kubernetes/blob/main/Services/Notes.md
 
-**DNS resolution inside a cluster**
-- Kubernetes Uses *CoreDNS* for Internal DNS
-    - Kubernetes automatically assigns DNS names to *Services and Pods*.
-    - CoreDNS (or kube-dns) runs as a *Deployment* inside the cluster.
-- Service DNS Resolution
-    - Every Service gets a DNS name in the format: `<service-name>.<namespace>.svc.cluster.local`
- - Pod DNS Resolution
-    - If a Pod needs to communicate with another Pod in the same Service, it can use the Service name.
-    - If DNS policies allow it, a Pod can also resolve other Pods using: `<pod-ip>.<namespace>.pod.cluster.local`
-
 ### ConfigMaps and Secrets ###
 
 **ConfigMaps**
