@@ -69,6 +69,7 @@ spec:
       port: 80
       targetPort:8080
 ```
+---
 
 ### Service Discovery ###
 Kubernetes provides service discovery through its **DNS (Domain Name System)** and **Kubernetes Services** mechanism.
@@ -81,6 +82,8 @@ Kubernetes provides service discovery through its **DNS (Domain Name System)** a
 **Service Abstraction:**
 - A Kubernetes Service acts as a stable endpoint for a set of pods, abstracting away the actual pod IPs (which can change over time due to scaling or pod restarts).
 - Kubernetes keeps track of the available pods for each service through labels and selectors, ensuring the service always points to the right set of pods.
+
+---
 
 ### Internal Load Balancing ###
 - Kubernetes Service (ClusterIP) uses **iptables** or **IPVS** (depending on configuration) for load balancing traffic among the pods that back the service.
