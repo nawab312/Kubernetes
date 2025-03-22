@@ -5,8 +5,6 @@ A Service in Kubernetes provides a way to expose your application running inside
 - Pod IPs Are Ephemeral: Pods are dynamic, and their IP addresses can change when they restart. A Service ensures a stable endpoint to communicate with the Pods.
 - Load Balancing: Services distribute traffic across all Pods that match the selector, enabling better resource utilization and reliability
 
-## Types of Services ##
-
 ### ClusterIP ###
 - Exposes the Service only within the cluster. Pods within the same cluster can access it via its ClusterIP.
 - Use Case: Backend services like databases that don’t need external exposure.
