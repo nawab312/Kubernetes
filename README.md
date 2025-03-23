@@ -134,7 +134,7 @@ A Node is a physical or virtual machine in the Kubernetes cluster that runs the 
 - **Debugging Pods and Containers**
 - **Common Issues and Solutions (CrashLoopBackOff, ImagePullBackOff, etc.)**
 - **Using kubectl for Troubleshooting**
-- github.com/nawab312/Kubernetes/edit/main/Kubernetes Scheduling %26 Resource Management/Pods and Resource Requests Limitations/Notes.md
+- https://github.com/nawab312/Kubernetes/blob/main/Kubernetes_TroubleShooting_Debugging.md
 
 ### Kubernetes Scheduling ###
 
