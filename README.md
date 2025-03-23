@@ -196,6 +196,11 @@ spec:
 ```
 ![image](https://github.com/user-attachments/assets/6466be37-1dea-4296-aac6-2bcab920e105)
 
+### Kubernetes Security ###
+- **RBAC (Role-Based Access Control)**
+- **Network Policies** https://github.com/nawab312/Kubernetes/blob/main/Security/NetworkPolicy.md
+- **ServiceAccount** https://github.com/nawab312/Kubernetes/blob/main/Security/ServiceAccount.md
+
 
 **Ingress** https://github.com/nawab312/Kubernetes/blob/main/Ingress/Notes.md
 
