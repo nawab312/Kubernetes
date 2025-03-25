@@ -42,6 +42,15 @@
 - **Resource Quotas**
 - https://github.com/nawab312/Kubernetes/blob/main/Kubernetes_Scheduling_Resource_Management.md
 
+### Kubernetes Security ###
+- **RBAC (Role-Based Access Control)**
+- **Network Policies**
+- **Service Accounts**
+- **Pod Security Policies (PSP)**
+- **Secrets Management**
+- **Security Contexts**
+- **Kubernetes and CIS Benchmarks**
+
 ### Kubernetes Deployments & Management ###
 - **Deployment Strategies (Rolling, Recreate, Blue-Green, Canary)**
 - **Helm Charts (Introduction, Installation, and Usage)**
