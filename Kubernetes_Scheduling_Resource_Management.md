@@ -6,7 +6,6 @@
 - Resource Limits:
     - Specify the maximum amount of CPU and memory a Pod can use.
     - Prevents a Pod from monopolizing resources.
-https://github.com/nawab312/Kubernetes/blob/main/Pods/Pod-1.yaml
 
 **Node Affinity & Anti-Affinity**
 - Node Affinity: A way to specify which nodes a Pod prefers to run on based on node labels.
