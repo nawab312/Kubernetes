@@ -13,6 +13,23 @@ my-helm-chart/
 │── Chart.yaml             # Chart metadata
 │── .helmignore            # Files to exclude from Helm package
 ```
+
+**Commands**
+- `helm list` List all installed charts
+- `helm create mychart` Create a new Helm chart
+- `helm package mychart` Package a Helm chart
+- `helm lint mychart` Lint (validate) a Helm chart
+- `helm install myrelease mychart` Install a Helm chart
+- `helm install myrelease mychart -f values.yaml` Install a Helm chart with custom values
+- `helm install myrelease mychart --set replicaCount=3` Install with --set flag for inline value overrides
+- `helm upgrade myrelease mychart -f values.yaml` Upgrade an existing release
+- `helm rollback myrelease 1` Rollback to a previous Helm release version
+- `helm install myrelease mychart --dry-run --debug` Dry-run and debug a Helm chart (without installing it)
+
+
+
+
+
 **Key Files in a Helm Chart**
 - Chart.yaml – Metadata about the chart (name, version, description)
 - values.yaml – Defines customizable values for the deployment (e.g., image name, replicas, environment variables).
