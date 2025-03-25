@@ -19,6 +19,15 @@
 - **Types of Services (ClusterIP, NodePort, LoadBalancer, ExternalName)**
 - **Network Policies**
 
+### Kubernetes Ingress & Load Balancing ###
+- **What is Ingress & Why is it Needed?**
+- **Comparing Ingress vs LoadBalancer vs NodePort**
+- **Setting Up an Ingress Controller**
+- **Ingress Resources & Rules**
+- **Annotations in Ingress**
+- **Least-Connection Load Balancing with Ingress**
+- **Troubleshooting Ingress Issues**
+
 ### Kubernetes Scheduling & Resource Management ###
 - **Scheduler Overview**
 - **Pods and Resource Requests/Limitations**
@@ -58,8 +67,6 @@
 - **Using kubectl for Troubleshooting**
 - https://github.com/nawab312/Kubernetes/blob/main/Kubernetes_TroubleShooting_Debugging.md
 
-
-**Ingress** https://github.com/nawab312/Kubernetes/blob/main/Ingress/Notes.md
 
 **Statefuleset** https://github.com/nawab312/Kubernetes/blob/main/StatefuleSet/Notes.md
 
