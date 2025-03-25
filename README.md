@@ -1,82 +1,28 @@
-## What is Kubernetes? ##
-Kubernetes (often abbreviated as K8s) is an open-source platform for automating the deployment, scaling, and management of containerized applications. It helps you manage applications that are composed of many containers across multiple machines, ensuring that the system is highly available, scalable, and resilient.
+### Introduction to Kubernetes ###
+- **What is Kubernetes?**
+- **Kubernetes Architecture**
 
-### Why to use Kubernetes if we have Docker? ###
-- Docker is a powerful tool for creating and running containers, allowing developers to package applications with all their dependencies into lightweight, portable environments. However, Docker alone is not enough when managing multiple containers across different machines in a production environment.
-- Kubernetes is a container orchestration platform that automates the deployment, scaling, and management of containerized applications.
-- Unlike Docker, which requires manual intervention to start, stop, and scale containers, Kubernetes provides built-in features like automatic scaling, load balancing, self-healing, and rolling updates. It ensures high availability by restarting failed containers and distributing traffic efficiently across multiple instances
-- Additionally, Kubernetes makes it easy to manage multi-container applications across multiple servers, ensuring consistency and reliability. In short, while Docker helps in containerizing applications, Kubernetes is essential for managing and orchestrating them at scale in production environments.
+### Kubernetes Components ###
+- **Pods**
+- **ReplicaSets**
+- **Deployments**
+- **Namespaces**
+- **Services**
+- **Volumes**
+- **ConfigMaps and Secrets**
+- **StatefulSets**
+- **DaemonSets**
+- **Jobs and CronJobs**
 
-## Kubernetes Architecture ##
-Kubernetes operates in a master-slave architecture, where the Master controls and manages the state of the cluster, while the Node(s) run the containers.
 
-![Kubernetes Architecture](https://github.com/nawab312/Kubernetes/blob/main/Images/Kubernetes_Architecture.png)
 
-### Master Components ###
-The Master node is responsible for for managing the *overall cluster state*, *scheduling applications*, and ensuring that the *desired state of the system* is maintained. The key components of the master node include
-- **API Server (kube-apiserver):** is the entry point for all API requests. It exposes Kubernetes APIs and is responsible for handling all the internal and external requests for the cluster. It validates and processes REST requests, updates etcd, and sends commands to the other components.
-  - You can interact with the API server directly using `kubectl`. The `-v=8` flag increases verbosity and shows API calls made to the API server.
-    ```bash
-    kubectl get pods -v=8
-    ```
-  - How kube-apiserver Handles Requests?
-    - Let’s go through an example where a user creates a pod, and the API server processes the request.
-    - User Creates a Pod `kubectl run nginx --image=nginx --restart=Never`
-    - API Request Flow
-      - `kubectl` sends an HTTP POST request to the API server. The request body contains JSON defining the Pod object.
-        ```bash
-        POST /api/v1/namespaces/default/pods
-        ```
-    - API Server Validates and Authenticates
-      - The API server *validates* the request (ensuring correct syntax and required fields).
-      - It *authenticates* the user using Kubernetes RBAC, service accounts, or certificates.
-      - It *authorizes* the action using Role-Based Access Control (RBAC).
-    - API Server Updates etcd
-      - If validation passes, the API server writes the Pod definition into etcd, ensuring it's stored persistently.
-    - API Server Notifies Other Components
-      - *Scheduler*: The API server notifies the scheduler that a new Pod needs a node assignment.
-      - *Controller Manager*: The API server updates the ReplicaSet or Deployment controllers if needed.
-      - *Kubelet*: Once a node is assigned, the API server sends an update to the kubelet on that node to pull the image and start the container.
-          
-- **Controller Manager:** Runs controllers that regulate the state of the cluster. These controllers ensure that the current state of the system matches the desired state. Examples of controllers are:
-    - *Replication Controller*: Ensures that the desired number of pod replicas are running
-    - *Node Controller*: Manages node status, including adding or removing nodes
-    - *Job Controller*: Ensures that jobs are completed successfully
- 
-    - How Controllers Work?
-      - Let’s go through an example where a *ReplicaSet controller* ensures that the desired number of pods are running.
-      - Creating a Deployment: A user runs the following command to create a deployment with *3 replicas*:
-        ```bash
-        kubectl create deployment nginx --image=nginx --replicas=3
-        ```
-      - What Happens Internally?
-        - kubectl Sends Request to API Server. The API Server validates and stores the Deployment definition in *etcd*.
-          ```bash
-          POST /apis/apps/v1/namespaces/default/deployments
-          ```
-        - Deployment Controller in Controller Manager Detects the Change. The *Deployment Controller* notices that the *desired state* is 3 replicas, but currently, there are 0 pods running.
-        - The Deployment Controller creates a *ReplicaSet* to manage the pods.
-        - *ReplicaSet Controller* Ensures Pod Creation. The ReplicaSet Controller compares the desired state (`replicas=3`) with the current state (`0 pods running`). It creates 3 new pods by sending a request to the API Server.
-        - Scheduler Assigns Pods to Nodes. The *API Server* notifies the corresponding kubelet to start the pods.
 
-- **Scheduler (kube-scheduler):** is responsible for assigning Pods to Nodes based on resource availability, constraints, and policies. It monitors the cluster to determine the best nodes for the Pods. If you want to schedule it to a specific node, you can use the `nodeSelector` field.
-```yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: nginx-pod
-spec:
-  containers:
-    - name: nginx 
-      image: nginx:1.14.2
-  nodeSelector:
-    disktype: ssd
-```
-- **etcd:** Is a distributed key-value store used by Kubernetes to store all cluster data. It stores configuration and state data (e.g., which Pods are running, what the cluster's state is, etc.). If etcd fails, the entire cluster's state could be lost
+
 
 ### Node Components ###
 A Node is a physical or virtual machine in the Kubernetes cluster that runs the applications (containers) and their workloads. Each Node contains several important components:
-- **kubelet:** The kubelet ensures that containers are running in Pods on each node. It listens to the API server and makes sure the node’s containers are running as specified.
+
+- **kubelet:** 
     - Pod Management: The Kubelet reads the PodSpecs (configuration for the Pod) and ensures that containers in the Pod are started, running, and healthy. If a container fails or crashes, the Kubelet will attempt to restart it, as per the configuration.
     - Health Checks: It continuously monitors the health of the containers and can perform liveness probes (to check if a container is running as expected) and readiness probes (to check if a container is ready to accept traffic). If a container fails a health check, the Kubelet will report the failure and take appropriate action like restarting the container
     - Node Communication: The Kubelet communicates with the Kubernetes API server to register the status of the node and report on the health of the Pods running on it.
