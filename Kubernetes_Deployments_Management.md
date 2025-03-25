@@ -26,6 +26,7 @@ my-helm-chart/
   - Running pre-install validation checks.
   - Cleaning up resources after uninstalling.
   - Executing custom scripts during Helm lifecycle events.
+    
 ![image](https://github.com/user-attachments/assets/a0e0bf62-6e14-46f1-a534-dd03023b5a01)
 
 - Helm Hook: Pre-Install Job for DB Migration
@@ -69,6 +70,60 @@ metadata:
 data:
   APP_ENV: {{ .Values.configMap.data.APP_ENV | quote }}
 {{- end }}
+```
+
+**Helper Functions in Helm (_helpers.tpl)**
+- Helm helper functions are reusable templates defined in the `_helpers.tpl` file inside the `templates/ `directory.
+- They help eliminate redundancy by allowing you to define and reuse common logic across multiple resources
+
+Custom Helm Helper Function for Standardized Labels. Provides a consistent labeling scheme for all resources.
+- Create `_helpers.tpl` with a Custom Label Function
+```yaml
+{{- define "mychart.labels" -}}
+app.kubernetes.io/name: {{ .Chart.Name }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/version: {{ .Chart.Version }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+```
+- Use the Helper Function in deployment.yaml
+  - `nindent 4` & `nindent 8` ensure proper YAML formatting.
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deployment
+  labels:
+    {{- include "mychart.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        {{- include "mychart.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: my-app
+          image: nginx
+```
+- Use the Helper Function in service.yaml
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-service
+  labels:
+    {{- include "mychart.labels" . | nindent 4 }}
+spec:
+  selector:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
 ```
 
 **Example**
