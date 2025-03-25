@@ -14,6 +14,11 @@
 - **DaemonSets**
 - **Jobs and CronJobs**
 
+### Kubernetes Networking ###
+- **Cluster Networking Model**
+- **Service Discovery**
+- **Types of Services (ClusterIP, NodePort, LoadBalancer, ExternalName)**
+- **Network Policies**
 
 
 
