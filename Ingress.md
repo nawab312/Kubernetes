@@ -82,4 +82,30 @@ spec:
             port:
               number: 80
 ```
-Solution: https://github.com/nawab312/Kubernetes/blob/main/Ingress/Ingress_Resource/Ingress_Resource1.yaml
+Solution:
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: path-matching-ingress
+spec: 
+  rules:
+    - host: example.com
+      http:
+        paths:
+          - path: /app
+            pathType: Exact
+            backend:
+              service:
+                name: exact-service
+                port:
+                  number: 80
+
+          - path: /app
+            pathType: Prefix
+            backend:
+              service:
+                name: prefix-service
+                port:
+                  number: 80
+```
