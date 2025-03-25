@@ -134,6 +134,13 @@ A Node is a physical or virtual machine in the Kubernetes cluster that runs the 
 - **Resource Quotas**
 - https://github.com/nawab312/Kubernetes/blob/main/Kubernetes_Scheduling_Resource_Management.md
 
+### Kubernetes Deployments & Management ###
+- **Deployment Strategies (Rolling, Recreate, Blue-Green, Canary)**
+- **Helm Charts (Introduction, Installation, and Usage)**
+- **Kubectl CLI Commands (Common Commands)**
+- **Troubleshooting Kubernetes (Logs, Events, Describe, etc.)**
+- **Continuous Integration and Continuous Delivery (CI/CD) with Kubernetes**
+
 ### Kubernetes Troubleshooting & Debugging ###
 - **Debugging Pods and Containers**
 - **Common Issues and Solutions (CrashLoopBackOff, ImagePullBackOff, etc.)**
