@@ -61,16 +61,27 @@
 - **Continuous Integration and Continuous Delivery (CI/CD) with Kubernetes**
 - https://github.com/nawab312/Kubernetes/blob/main/Kubernetes_Deployments_Management.md
 
+### Autoscaling in Kubernetes ###
+- **Horizontal Pod Autoscaler (HPA)**
+ - **Basics & Workflow**
+ - **Metrics Server Integration**
+ - **CPU & Memory-Based Scaling**
+ - **Custom Metrics with Prometheus Adapter**
+ - **Example HPA Configurations**
+- **Vertical Pod Autoscaler (VPA)**
+  - **How VPA Works**
+  - **VPA Modes (Off, Auto, Initial)**
+  - **Example VPA Configurations**
+- **Cluster Autoscaler**
+  - **What is Cluster Autoscaler?**
+  - **How It Works**
+  - **Example Configurations**   
+      
 ### Kubernetes Troubleshooting & Debugging ###
 - **Debugging Pods and Containers**
 - **Common Issues and Solutions (CrashLoopBackOff, ImagePullBackOff, etc.)**
 - **Using kubectl for Troubleshooting**
 - https://github.com/nawab312/Kubernetes/blob/main/Kubernetes_TroubleShooting_Debugging.md
-
-
-**Statefuleset** https://github.com/nawab312/Kubernetes/blob/main/StatefuleSet/Notes.md
-
-**Scaling in Kubernetes** https://github.com/nawab312/Kubernetes/blob/main/HPA/Notes.md
 
 **Istio** https://github.com/nawab312/Kubernetes/blob/main/Istio/Notes.md
 
