@@ -135,4 +135,55 @@ DaemonSet in Kubernetes ensures that a copy of a specific Pod is running on ever
 - Secrets can be accessed by Pods as: Environment variables, Mounted volumes.
 - Kubernetes Secrets are stored in etcd, but by default, they are only base64-encoded, not encrypted. This means anyone with access to etcd storage can read sensitive data like passwords and API keys. To enhance security, Kubernetes provides Encryption at Rest, which encrypts Secrets before storing them in etcd.
 
+Example
+- How to Create a Secret?
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-secret
+type: Opaque
+data:
+  username: dXNlcm5hbWU=  # Base64 encoded "username"
+  password: cGFzc3dvcmQ=  # Base64 encoded "password"
+```
+- Use Secret as an Environment Variable in a Pod
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+    - name: myContainer
+      image: nginx
+      env:
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: my-secret
+              key: username
+  restartPolicy: Always
+```
+- Use Secret as a Mounted Volume
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+    - name: myContainer
+      image: nginx
+      volumeMounts:
+        - name: secret-volume
+          mountPath: "/etc/secret-data"
+          readOnly: true #readOnly: true → Prevents accidental modification of Secret files.
+  volumes:
+    - name: secret-volume
+      secret:
+        secretName: my-secret
+  restartPolicy: Always
+```
+
   
