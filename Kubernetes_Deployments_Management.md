@@ -18,6 +18,59 @@ my-helm-chart/
 - values.yaml – Defines customizable values for the deployment (e.g., image name, replicas, environment variables).
 - templates/ – Contains Kubernetes YAML files with Helm templating syntax.
 
+**Helm Hooks**
+- Helm hooks are special Kubernetes resources that execute at specific points in the Helm release lifecycle.
+- They allow you to run jobs, scripts, or custom Kubernetes resources before or after certain Helm operations like installation, upgrade, or deletion.
+- Why Use Helm Hooks?
+  - Database migrations before deploying an app.
+  - Running pre-install validation checks.
+  - Cleaning up resources after uninstalling.
+  - Executing custom scripts during Helm lifecycle events.
+![image](https://github.com/user-attachments/assets/a0e0bf62-6e14-46f1-a534-dd03023b5a01)
+
+- Helm Hook: Pre-Install Job for DB Migration
+  - `helm.sh/hook: pre-install` → Runs before the main deployment.
+  - `helm.sh/hook-delete-policy: hook-succeeded` → Deletes job after success.
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-db-migration
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: db-migrate
+          image: myrepo/db-migration:latest
+          command: ["python", "migrate.py"]
+```
+
+**Conditionals in Helm**
+- Helm uses `if` statements inside templates with the `values.yaml` file to control resource deployment.
+- Conditionally Deploy a ConfigMap
+```yaml
+#values.yaml
+configMap:
+  enabled: true
+  data:
+    APP_ENV: "production"
+```
+```yaml
+#configmap.yaml
+{{- if .Values.configMap.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+data:
+  APP_ENV: {{ .Values.configMap.data.APP_ENV | quote }}
+{{- end }}
+```
+
 **Example**
 You need to package and deploy a microservice using Helm by creating a custom Helm chart.
 - Create a Helm chart to deploy a Node.js or Python Flask application.
