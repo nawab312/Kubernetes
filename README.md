@@ -26,13 +26,6 @@
 
 
 
-
-
-
-- Example: https://github.com/nawab312/Kubernetes/blob/main/ConfigMap_Secrets/Secret1.md
--   How to do: https://github.com/nawab312/Kubernetes/blob/main/ConfigMap_Secrets/Secret2.md
-
-
 ### Kubernetes Scheduling & Resource Management ###
 - **Scheduler Overview**
 - **Pods and Resource Requests/Limitations**
