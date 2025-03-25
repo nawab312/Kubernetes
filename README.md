@@ -87,11 +87,6 @@
 
 **SSL Certificates in Kubernetes** https://github.com/nawab312/Kubernetes/blob/main/SSLCertificate_Kubernetes.md
 
-**Common Errors in Kubernetes** https://github.com/nawab312/Kubernetes/blob/main/Common_Errors.md
-
-- Difference between `kubectl apply`, `kubectl create`, `kubectl replace`
-![image](https://github.com/user-attachments/assets/e2771329-33be-446f-ad3e-74de10812595)
-
 **Important Commands** https://github.com/nawab312/Kubernetes/blob/main/Commands.md
 
 
