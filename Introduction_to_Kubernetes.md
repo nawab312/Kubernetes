@@ -88,7 +88,7 @@ A Node is a physical or virtual machine in the Kubernetes cluster that runs the 
 - Network Routing: The Kube-Proxy handles the routing of network requests from external clients or other Pods to the correct destination Pods. It uses iptables or IPVS (depending on the implementation) to manage the network rules and direct traffic
 - Load Balancing: It also performs basic load balancing. When there are multiple Pods behind a Service, the Kube-Proxy will distribute traffic across these Pods in a round-robin fashion.
 
-****Container Runtime (Docker, containerd)** 
+**Container Runtime (Docker, containerd)** 
 - The container runtime is the software responsible for running the containers. Docker was the initial choice for Kubernetes, but it now supports other runtimes like containerd and CRI-O.
 
       
