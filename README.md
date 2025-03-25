@@ -140,6 +140,7 @@ A Node is a physical or virtual machine in the Kubernetes cluster that runs the 
 - **Kubectl CLI Commands (Common Commands)**
 - **Troubleshooting Kubernetes (Logs, Events, Describe, etc.)**
 - **Continuous Integration and Continuous Delivery (CI/CD) with Kubernetes**
+- https://github.com/nawab312/Kubernetes/blob/main/Kubernetes_Deployments_Management.md
 
 ### Kubernetes Troubleshooting & Debugging ###
 - **Debugging Pods and Containers**
