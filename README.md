@@ -58,11 +58,6 @@
 - **Using kubectl for Troubleshooting**
 - https://github.com/nawab312/Kubernetes/blob/main/Kubernetes_TroubleShooting_Debugging.md
 
-### Kubernetes Security ###
-- **RBAC (Role-Based Access Control)**
-- **Network Policies** https://github.com/nawab312/Kubernetes/blob/main/Security/NetworkPolicy.md
-- **ServiceAccount** https://github.com/nawab312/Kubernetes/blob/main/Security/ServiceAccount.md
-
 
 **Ingress** https://github.com/nawab312/Kubernetes/blob/main/Ingress/Notes.md
 
