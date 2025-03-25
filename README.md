@@ -19,13 +19,6 @@
 - **Types of Services (ClusterIP, NodePort, LoadBalancer, ExternalName)**
 - **Network Policies**
 
-
-
- 
-**Storage in Kubernetes** https://github.com/nawab312/Kubernetes/blob/main/Storage/Notes.md
-
-
-
 ### Kubernetes Scheduling & Resource Management ###
 - **Scheduler Overview**
 - **Pods and Resource Requests/Limitations**
@@ -34,6 +27,13 @@
 - **Cluster Autoscaler**
 - **Resource Quotas**
 - https://github.com/nawab312/Kubernetes/blob/main/Kubernetes_Scheduling_Resource_Management.md
+
+### Kubernetes Storage ###
+- **Volumes (EmptyDir, HostPath, Persistent Volumes)**
+- **Persistent Volume Claims**
+- **StatefulSets and Persistent Storage**
+- **Storage Classes**
+- **Dynamic Provisioning**
 
 ### Kubernetes Security ###
 - **RBAC (Role-Based Access Control)**
