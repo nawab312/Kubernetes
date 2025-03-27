@@ -1,5 +1,17 @@
 ### Kubernetes Scheduling ###
-Kubernetes scheduling is the process of assigning Pods to Nodes within a cluster based on various constraints and policies. The kube-scheduler is the default Kubernetes scheduler responsible for making these decisions.
+Kubernetes scheduling is the process of assigning Pods to Nodes within a cluster based on various constraints and policies. The *kube-scheduler* is the default Kubernetes scheduler responsible for making these decisions.
+
+**Key Components of Kubernetes Scheduling**
+
+*kube-scheduler*
+- The default scheduler in Kubernetes.
+- Watches for unscheduled Pods and assigns them to appropriate Nodes based on constraints and policies.
+
+*Scheduler Workflow*
+- Filtering (Predicates): Determines eligible nodes based on constraints (e.g., resource availability, node selectors, taints, tolerations).
+- Scoring (Prioritization): Ranks eligible nodes based on scoring functions (e.g., least resource usage, affinity rules).
+- Binding: Assigns the Pod to the best-ranked node.
+
 
 **Resource Requests and Limits**
 - Resource Requests:
