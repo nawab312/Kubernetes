@@ -12,6 +12,42 @@ Kubernetes scheduling is the process of assigning Pods to Nodes within a cluster
 - Scoring (Prioritization): Ranks eligible nodes based on scoring functions (e.g., least resource usage, affinity rules).
 - Binding: Assigns the Pod to the best-ranked node.
 
+**Scheduling Constraints**
+
+*Node Selectors (nodeSelector)*
+- Assigns a Pod to a Node with a specific label.
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  nodeSelector:
+    disktype: ssd
+```
+
+*Node Affinity & Anti-Affinity*
+- Node Affinity: A way to specify which nodes a Pod prefers to run on based on node labels. More flexible than nodeSelector, supporting required (hard) rules and preferred (soft) rules.
+```yaml
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: disktype
+          operator: In
+          values:
+          - ssd
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 1
+      preference:
+        matchExpressions:
+        - key: zone
+          operator: In
+          values:
+          - us-east-1a
+```
+- Node Anti-Affinity: Opposite of affinity; ensures Pods are scheduled on separate nodes, useful for high availability.
 
 **Resource Requests and Limits**
 - Resource Requests:
@@ -21,9 +57,7 @@ Kubernetes scheduling is the process of assigning Pods to Nodes within a cluster
     - Specify the maximum amount of CPU and memory a Pod can use.
     - Prevents a Pod from monopolizing resources.
 
-**Node Affinity & Anti-Affinity**
-- Node Affinity: A way to specify which nodes a Pod prefers to run on based on node labels.
-- Node Anti-Affinity: Opposite of affinity; ensures Pods are scheduled on separate nodes, useful for high availability.
+
 https://github.com/nawab312/Kubernetes/blob/main/Pods/Pod-2.yaml
 
 **Taints and Tolerations**
