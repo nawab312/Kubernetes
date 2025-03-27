@@ -1361,4 +1361,49 @@ kubectl get pods -n istio-demo
 ✅ **Hands-on Exercise** → Implemented circuit breakers and tested failure handling.  
 
 
+### DAY 8 Multi-Cluster Deployment in Istio ###
+Deploying a service mesh across multiple clusters enables high availability, disaster recovery, and traffic management across different regions or cloud providers.
+
+Prerequisites:
+- At least two Kubernetes clusters (Cluster A & Cluster B).
+- Istio installed on both clusters.
+- A single control plane or multi-control plane setup.
+
+*Multi-Cluster Topologies*
+
+There are two common architectures:
+- Primary-Remote (Single Control Plane)
+  - One cluster (primary) hosts the Istio control plane (istiod).
+  - Other clusters (remote) host workloads and connect to the control plane.
+  - Easier to manage but introduces latency for control plane operations.
+- Multi-Primary (Multi-Control Plane)
+  - Each cluster runs its own control plane.
+  - Federation is used to synchronize configurations.
+  - Better for fault tolerance but requires more configuration.
+ 
+*Deploy Istio in Multi-Cluster Mode*
+
+Example: Primary-Remote Setup
+- Install Istio on the Primary Cluster (Cluster A)
+  ```bash
+  istioctl install --set profile=default -y
+  ```
+- Enable Multi-Cluster API Server Access
+  - Ensure Cluster A's API server is accessible from Cluster B.
+  - Generate a service account token in Cluster A and apply it in Cluster B.
+- Install Istio in Remote Cluster (Cluster B)
+  ```bash
+  istioctl install --set values.global.meshID=mesh1 \
+    --set values.global.multiCluster.clusterName=cluster-b \
+    --set values.global.network=network2 \
+    --set profile=remote -y
+  ```
+- Connect the Clusters
+  - Export the primary cluster’s service discovery and credentials.
+  - Apply them in the remote cluster.
+- Verify Cross-Cluster Communication
+  ```bash
+  kubectl get svc -n istio-system
+  ```
+
 
