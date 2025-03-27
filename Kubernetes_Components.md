@@ -38,6 +38,36 @@ spec:
     - Service mesh proxies (e.g., Envoy for Istio).
     - Security (e.g., authentication sidecars).
    
+**Pod Disruption Budget (PDB)**
+
+Policy that ensures that a minimum number of pods are always available during voluntary disruptions, such as node drains, rolling updates, or cluster maintenance. Key Features of PDB:
+- Ensures High Availability – Prevents too many pods from being disrupted at once.
+- Applies to Voluntary Disruptions – Such as kubectl drain, node upgrades, or rolling updates.
+- Does NOT Apply to Involuntary Disruptions – Such as node crashes or hardware failures.
+```yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: my-app-pdb
+spec:
+  minAvailable: 2  # At least 2 pods must be running at all times
+  selector:
+    matchLabels:
+      app: my-app
+```
+
+```yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: my-app-pdb
+spec:
+  maxUnavailable: 1  # At most 1 pod can be disrupted at a time
+  selector:
+    matchLabels:
+      app: my-app
+```
+   
 ### Service ###
 - Service is an abstraction that defines a logical set of Pods and a policy by which to access them. It provides a stable endpoint (usually a DNS name) to access a group of Pods, even though the Pods themselves might be dynamically created, destroyed, or replaced. We cannot scale a Kubernetes Service. 
 - **Endpoint** is an object that represents the IP addresses (Including Port) of the Pods that are dynamically assigned to a Service. It helps in routing traffic to the correct Pod(s) backing a Service.
