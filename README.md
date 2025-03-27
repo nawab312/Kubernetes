@@ -83,6 +83,12 @@
 - **Using kubectl for Troubleshooting**
 - https://github.com/nawab312/Kubernetes/blob/main/Kubernetes_TroubleShooting_Debugging.md
 
+### Kubernetes Custom Resources & Operators ###
+- **Custom Resource Definitions (CRDs)**
+- **Operators in Kubernetes**
+- **Helm and Custom Resource ManagementK**
+
+
 **Istio** https://github.com/nawab312/Kubernetes/blob/main/Istio/Notes.md
 
 **SSL Certificates in Kubernetes** https://github.com/nawab312/Kubernetes/blob/main/SSLCertificate_Kubernetes.md
