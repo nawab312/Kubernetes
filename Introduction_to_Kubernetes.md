@@ -73,6 +73,40 @@ spec:
 **etcd**
 - Is a distributed key-value store used by Kubernetes to store all cluster data. 
 - It stores configuration and state data (e.g., which Pods are running, what the cluster's state is, etc.). If etcd fails, the entire cluster's state could be lost
+```bash
+etcdctl --endpoints=https://<etcd-endpoint>:2379 --cert-file=/path/to/cert --key-file=/path/to/key --ca-file=/path/to/ca-cert get "" --prefix --keys-only
+```
+```bash
+# Output
+/registry/pods/default/pod-1
+/registry/pods/default/pod-2
+/registry/pods/default/pod-3
+/registry/services/default/my-service
+/registry/nodes/node-1
+/registry/nodes/node-2
+/registry/namespaces/default
+/registry/deployments/default/deployment-1
+/registry/secrets/default/my-secret
+/registry/configmaps/default/my-configmap
+/registry/services/endpoints/default/my-service
+/registry/replicasets/default/rs-1
+/registry/replicasets/default/rs-2
+/registry/replicasets/default/rs-3
+/registry/statefulsets/default/statefulset-1
+/registry/statefulsets/default/statefulset-2
+```
+
+```bash
+etcdctl --endpoints=https://<etcd-endpoint>:2379 --cert-file=/path/to/cert --key-file=/path/to/key --ca-file=/path/to/ca-cert get "" --prefix
+```
+```bash
+# Output
+/registry/pods/default/pod-1
+{"kind":"Pod","apiVersion":"v1","metadata":{"name":"pod-1","namespace":"default","uid":"1234567890","labels":{"app":"myapp"}},"spec":{"containers":[{"name":"nginx","image":"nginx:latest"}]}}
+/registry/pods/default/pod-2
+{"kind":"Pod","apiVersion":"v1","metadata":{"name":"pod-2","namespace":"default","uid":"1234567891","labels":{"app":"myapp"}},"spec":{"containers":[{"name":"nginx","image":"nginx:latest"}]}}
+```
+
 
 A Node is a physical or virtual machine in the Kubernetes cluster that runs the applications (containers) and their workloads. Each Node contains several important components:
 
