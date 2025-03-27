@@ -1,4 +1,5 @@
 ### Kubernetes Scheduling ###
+Kubernetes scheduling is the process of assigning Pods to Nodes within a cluster based on various constraints and policies. The kube-scheduler is the default Kubernetes scheduler responsible for making these decisions.
 **Resource Requests and Limits**
 - Resource Requests:
     - Specify the minimum amount of CPU and memory a Pod needs to run.
