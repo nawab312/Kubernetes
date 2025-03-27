@@ -243,6 +243,50 @@ metrics:
       averageUtilization: 70
 ```
 
+**Scale-up and Scale-down behavior of the Horizontal Pod Autoscaler (HPA)**
+- The scaleUp behavior defines how quickly the HPA will increase the number of pods when the observed metric exceeds the desired target.
+- The scaleDown behavior defines how quickly the HPA will decrease the number of pods when the observed metric falls below the desired target.
+- `stabilizationWindowSeconds`: The time period during which HPA will prevent further scaling actions after a scale-up/down event, allowing the system to stabilize before making another scaling decision.
+- `selectPolicy`: Specifies the policy for scaling (e.g., scaling based on the most recent metric or the average).
+- `policies`: Defines the scaling policy, including the amount of pods to scale up/down at once and how fast it can increase the number of pods.
+```yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-app-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-app
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: AverageValue
+          averageUtilization: 50
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 300  # Prevents further scaling up within 5 minutes after a scale-up
+      selectPolicy: MaxChangePolicy  # Select the most significant scaling change
+      policies:
+        - type: Percent
+          value: 50  # Scale up by 50% of the current replica count
+          periodSeconds: 60  # Apply this policy every minute
+    scaleDown:
+      stabilizationWindowSeconds: 300  # Prevents scaling down too quickly after scaling up
+      selectPolicy: MaxChangePolicy  # Select the most significant scaling change
+      policies:
+        - type: Percent
+          value: 50  # Scale down by 50% of the current replica count
+          periodSeconds: 60  # Apply this policy every minute
+```
+
+
+
 
 **How Does HPA Work with Prometheus?**
 - Deploy Prometheus & Prometheus Adapter. Kubernetes does not understand Prometheus metrics by default. **Prometheus Adapter** translates these metrics into *Kubernetes Custom Metrics API*.
