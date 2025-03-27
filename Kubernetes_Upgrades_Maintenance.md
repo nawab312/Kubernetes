@@ -48,3 +48,74 @@ This will depend on your storage provider and whether you are using cloud-native
     ```bash
     valero backup create my-backup --include-namespaces=my-namespace
     ```
+
+**Cluster Upgrade Progress**
+
+The Cluster Upgrade Process in Kubernetes involves upgrading the control plane (master nodes) and worker nodes (node pools) while ensuring minimal downtime and maintaining cluster stability. Below is a step-by-step guide for a typical Kubernetes upgrade:
+
+*Preparation for Cluster Upgrade*
+
+Before starting the upgrade, ensure the following:
+- Backup the Cluster: Make sure you have a reliable backup of your Kubernetes cluster, especially the `etcd` data and any important resources (like Deployments, StatefulSets, etc).
+- Check Compatibility: Verify that your Kubernetes cluster version is compatible with the new version you are upgrading to. This can be done by checking the Kubernetes version support policy and ensuring there is no version mismatch.
+- Upgrade Documentation: Always refer to the official upgrade documentation for your platform, whether you’re using kubeadm, managed services like EKS, GKE, or AKS, or other solutions.
+- Update kubectl: Make sure your kubectl tool is updated to the version of the cluster you are upgrading to.
+  ```bash
+  kubectl version --client
+  ```
+- Drain Nodes: Drain the nodes (to avoid disruptions during the upgrade).
+  ```bash
+  kubectl drain <node-name> --ignore-daemonsets --delete-local-data
+  ```
+
+*Upgrade Control Plane (Master Nodes)*
+
+The control plane is the core of the Kubernetes cluster. Upgrading it usually involves upgrading the `kube-apiserver`, `kube-controller-manager`, `kube-scheduler`, and `etcd`.
+
+Using kubeadm for On-Prem or Self-Managed Clusters:
+- Upgrade `kubeadm`: Ensure you have the latest version of `kubeadm` installed:
+  ```bash
+  sudo apt-get update && sudo apt-get install -y kubeadm
+  ```
+- Check for Upgrade Plan: Before upgrading, check the upgrade plan:
+  ```bash
+  kubeadm upgrade plan
+  ```
+- Upgrade the Control Plane:
+  - This will upgrade the kube-apiserver, kube-controller-manager, kube-scheduler, etc.
+  ```bash
+  sudo kubeadm upgrade apply <version>
+  ```
+- Upgrade `kubectl`: After the control plane is upgraded, ensure that kubectl on the master nodes is upgraded as well.
+  ```bash
+  sudo apt-get install -y kubectl
+  ```
+- Upgrade kubelet on Master Nodes: Upgrade the kubelet on the master nodes:
+  ```bash
+  sudo apt-get update && sudo apt-get install -y kubelet=<version>
+  ```
+- Restart kubelet:
+  ```bash
+  sudo systemctl restart kubelet
+  ```
+
+*Upgrade Worker Nodes (Node Pools)*
+- Drain the Worker Nodes. Drain each node to prevent disruptions during the upgrade:
+  ```bash
+  kubectl drain <node-name> --ignore-daemonsets --delete-local-data
+  ```
+- Upgrade kubelet and kubectl:
+  ```bash
+  sudo apt-get update && sudo apt-get install -y kubelet=<version> kubectl=<version>
+  ```
+- Restart kubelet:
+  ```bash
+  sudo systemctl restart kubelet
+  ```
+- Uncordon the Worker Node. Once the worker node is upgraded, uncordon it to allow workloads to be scheduled again:
+  ```bash
+  kubectl uncordon <node-name>
+  ```
+- Repeat for All Worker Nodes: Repeat this process for each worker node in the cluster.
+
+*Post-Upgrade Steps: Update Add-ons, If you're using add-ons (e.g., Helm charts, CoreDNS, Ingress controllers), ensure that these are compatible with the upgraded Kubernetes version. Upgrade them if necessary.*
