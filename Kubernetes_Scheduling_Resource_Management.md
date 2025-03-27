@@ -26,8 +26,8 @@ spec:
     disktype: ssd
 ```
 
-*Node Affinity & Anti-Affinity*
-- Node Affinity: A way to specify which nodes a Pod prefers to run on based on node labels. More flexible than nodeSelector, supporting required (hard) rules and preferred (soft) rules.
+*Node Affinity*
+- More flexible than nodeSelector, supporting `required (hard)` rules and `preferred (soft)` rules.
 ```yaml
 affinity:
   nodeAffinity:
@@ -47,20 +47,8 @@ affinity:
           values:
           - us-east-1a
 ```
-- Node Anti-Affinity: Opposite of affinity; ensures Pods are scheduled on separate nodes, useful for high availability.
 
-**Resource Requests and Limits**
-- Resource Requests:
-    - Specify the minimum amount of CPU and memory a Pod needs to run.
-    - The scheduler ensures the node has at least the requested resources available
-- Resource Limits:
-    - Specify the maximum amount of CPU and memory a Pod can use.
-    - Prevents a Pod from monopolizing resources.
-
-
-https://github.com/nawab312/Kubernetes/blob/main/Pods/Pod-2.yaml
-
-**Taints and Tolerations**
+*Taints and Tolerations*
 - A taint is a way to mark a node so that only certain Pods can be scheduled on it.
 - `kubectl taint nodes node1 gpu=true:NoSchedule` Only Pods that tolerate the gpu=true taint can be scheduled on node1.
 - A toleration is a way for a Pod to indicate that it can tolerate (or accept) a specific taint on a node.
@@ -79,6 +67,49 @@ spec:
     - name: tensorflow
       image: tensorflow:latest
 ```
+
+*Pod Affinity and Anti-Affinity*
+- Affinity: Prefer placing Pods on the same node/zone.
+- Anti-Affinity: Avoid placing Pods on the same node/zone.
+```yaml
+affinity:
+  podAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      labelSelector:
+        matchLabels:
+          app: frontend
+      topologyKey: "kubernetes.io/hostname"
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      weight: 1
+      podAffinityTerm:
+        labelSelector:
+          matchLabels:
+            app: backend
+        topologyKey: "kubernetes.io/zone"
+```
+
+**Custom Scheduling**
+
+*Assigning Pods Manually*  
+- Using nodeName directly in the Pod spec:
+```yaml
+spec:
+  nodeName: worker-node-1
+```
+
+**Resource Requests and Limits**
+- Resource Requests:
+    - Specify the minimum amount of CPU and memory a Pod needs to run.
+    - The scheduler ensures the node has at least the requested resources available
+- Resource Limits:
+    - Specify the maximum amount of CPU and memory a Pod can use.
+    - Prevents a Pod from monopolizing resources.
+
+
+https://github.com/nawab312/Kubernetes/blob/main/Pods/Pod-2.yaml
+
+
 ![image](https://github.com/user-attachments/assets/6466be37-1dea-4296-aac6-2bcab920e105)
 
 Probe (Probe Means: To test Behaviour of System) Mechanisms:
