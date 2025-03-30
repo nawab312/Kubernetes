@@ -54,6 +54,11 @@ kubectl get pods -v=8
     - The Deployment Controller creates a *ReplicaSet* to manage the pods.
     - *ReplicaSet Controller* Ensures Pod Creation. The ReplicaSet Controller compares the desired state (`replicas=3`) with the current state (`0 pods running`). It creates 3 new pods by sending a request to the API Server.
     - Scheduler Assigns Pods to Nodes. The *API Server* notifies the corresponding kubelet to start the pods.
+- What happens if a Kubernetes Node running multiple critical Pods suddenly crashes?
+  - Node Failure Detection: The Kubernetes node controller, part of the `kube-controller-manager`, continuously monitors the health of nodes. It does this through heartbeat signals received from the kubelet running on each node.
+  - Marking Node as Unreachable: If a node stops sending heartbeats for a specific period (default is 40 seconds), Kubernetes marks it as NotReady.
+  - By default, after 5 minutes (300 seconds), the node controller evicts all Pods running on the failed node.
+  - The scheduler then attempts to reschedule these Pods onto other healthy nodes in the cluster.
    
 **Scheduler (kube-scheduler)**
 - Responsible for assigning Pods to Nodes based on resource availability, constraints, and policies. It monitors the cluster to determine the best nodes for the Pods. If you want to schedule it to a specific node, you can use the `nodeSelector` field.
