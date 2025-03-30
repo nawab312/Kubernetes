@@ -87,6 +87,12 @@ my-app-xyz   0/1     Evicted   0          5m
 - Kubernetes killed the pod due to resource pressure.
 - Happens when a node runs out of memory or disk space.
 
+---
+
+- When a Pod is in the "ContainerCreating" state for an extended period, it usually means Kubernetes is unable to pull the container image.
+- Running `kubectl describe pod <pod-name>` and seeing the error "Failed to pull image" strongly suggests that the image name, tag, or repository path is incorrect.
+
+---
 
 **You have a Kubernetes cluster with a Deployment running a mission-critical application. However, the Pods are frequently restarting. There are no errors in the application logs. How would you debug this?**    
 
