@@ -4,8 +4,38 @@ When deploying applications in Kubernetes, different strategies ensure minimal d
 **Rolling Deployment (Default Strategy)**
 - Concept: Gradually replaces old pods with new ones
 - How it works:
-  - Kubernetes incrementally updates a specified number of pods at a time.
-  - Ensures zero downtime by keeping some old pods running while bringing up new ones.
+  - New Pods Are Created Gradually:
+    - Kubernetes starts creating new Pods alongside existing ones, based on `maxSurge` settings.
+  - Old Pods Are Terminated Gradually:
+    - Once new Pods are ready, old Pods are removed one by one, following `maxUnavailable` limits.
+  - Process Continues Until All Pods Are Updated
+
+  ![image](https://github.com/user-attachments/assets/4a388946-2862-4829-ae5a-f83e51e87d0d)
+
+  ```yaml
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: my-app
+  spec:
+    replicas: 5
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 2   # Max 2 Pods can be down at any time
+        maxSurge: 1         # Can add 1 extra Pod during the update
+    template:
+      metadata:
+        labels:
+          app: my-app
+      spec:
+        containers:
+          - name: my-container
+            image: my-app:v2  # New image version
+  ```
+
+  ![image](https://github.com/user-attachments/assets/bc93c10f-92b5-40fe-94a2-64d887492095)
+
 - Use Cases:
   - Suitable for most applications.
   - Ideal for non-disruptive updates.
