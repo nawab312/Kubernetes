@@ -123,7 +123,8 @@ spec:
 ```
 
 **LoadBalancer**
-- Automatically provisions an external load balancer (cloud-provider specific). Exposes the Service to the internet with a public IP. 
+- Exposes the Service to the internet with a public IP.
+- Service of type LoadBalancer requests an external IP from the cloud provider (AWS, GCP, Azure, etc.). If the external IP is stuck in "pending", the most common reason is that the cloud provider's LoadBalancer controller is not running or misconfigured.
 - Use Case: Production services that need external access, such as websites or APIs
 ```yaml
 apiVersion: v1
