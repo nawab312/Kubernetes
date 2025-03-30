@@ -151,6 +151,32 @@ readinessProbe:
 - *Retry Mechanism* Kubernetes continuously retries scheduling the Pod, waiting for resources to free up or for new nodes to be added to the cluster.
 - *Cluster Autoscaler* If Cluster Autoscaler is configured, Kubernetes can automatically provision new nodes to handle the resource demand. Once new nodes are available, the Pod is scheduled.
 
+**When a node experiences resource pressure (CPU, memory, or disk pressure), Kubernetes evicts lower-priority Pods first to free up resources.**
+
+To protect critical application Pods from eviction, you should:
+- Use Priority Classes (`priorityClassName`)
+```yaml
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: critical-app-priority
+value: 100000  # Higher value = Higher priority
+globalDefault: false
+description: "Priority for critical application pods"
+```
+- Assign this priority to critical Pods:
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: critical-pod
+spec:
+  priorityClassName: critical-app-priority
+  containers:
+    - name: my-container
+      image: my-app
+```
+
 In a Kubernetes cluster, you delete a Kibana pod, but it keeps getting recreated with the status Init:0/1. How would you permanently delete the Kibana Pod, and what underlying Kubernetes concepts explain this behavior
 - The pod is likely managed by a higher-level controller (e.g., Deployment, StatefulSet, DaemonSet, or Helm Release).
 - `kubectl get all | grep kibana` This will reveal whether Kibana is controlled by a Job, Deployment, StatefulSet, or Helm Release.
