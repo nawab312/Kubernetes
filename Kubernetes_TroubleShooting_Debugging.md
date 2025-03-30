@@ -138,3 +138,18 @@ Since the application logs don’t show any errors, the issue might be related t
   - Enable detailed logging on the kubelet and check `/var/log/kubelet.log`.
   - Check if the cluster has any active policies (e.g., `LimitRange` or `PodSecurityPolicy`) affecting pod scheduling.
   - Consider moving the pod to another node using `kubectl cordon` and `kubectl drain` to see if the issue is node-specific.
+ 
+---
+
+**Question** In a Kubernetes cluster, a Pod remains in "Terminating" state for an extended period even after issuing kubectl delete pod <pod-name>. What is the most likely reason?
+
+**Answer** The Pod has a *finalizer* preventing deletion until cleanup tasks are completed.
+- A Finalizer is a Kubernetes metadata field that prevents an object (such as a Pod, PVC, or CRD) from being deleted until certain pre-deletion cleanup tasks are completed.
+- Think of it as a "pre-delete hook" that ensures dependent resources are properly cleaned up before Kubernetes removes the object.
+- How Do Finalizers Work?
+  - When you delete an object, Kubernetes does not remove it immediately if it has a finalizer.
+  - The object enters a "Terminating" state.
+  - The finalizer controller runs cleanup tasks (e.g., detaching volumes, deregistering from external services, or notifying cloud providers).
+  - Once cleanup is complete, Kubernetes removes the finalizer and then deletes the object.
+
+---
