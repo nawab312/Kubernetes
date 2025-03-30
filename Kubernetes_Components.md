@@ -191,6 +191,16 @@ spec:
         requests:
           storage: 1Gi
 ```
+- Manually Created PVCs:
+  You explicitly create the PVC before the StatefulSet and then reference it in the StatefulSet’s YAML.
+  The PVC is not owned by the StatefulSet, so deleting the StatefulSet does not remove the PVC.
+- Dynamically Provisioned PVCs
+  - When you use a `volumeClaimTemplates` section inside a StatefulSet YAML, Kubernetes automatically creates PVCs for each Pod.
+  - These PVCs are owned by the StatefulSet, meaning if you delete the StatefulSet with `--cascade=foreground`, Kubernetes might delete them too.
+  - If your PVCs were dynamically provisioned, but you want to keep them, delete the StatefulSet without deleting the PVCs:
+    ```bash
+    kubectl delete statefulset my-statefulset --cascade=orphan
+    ```
 
 **HeadLess Service**
 - A Headless Service manages DNS records for individual Pods *without providing a cluster IP*.
