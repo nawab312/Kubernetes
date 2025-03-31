@@ -1,25 +1,18 @@
-# Day 1: Introduction to Istio and Service Mesh
-
-## 1. What is Istio? Why Do We Need a Service Mesh?
-
-### What is Istio?
+**What is Istio?**
 
 Istio is an open-source service mesh that provides traffic management, security, and observability for microservices running in Kubernetes. It acts as an intermediary between microservices, abstracting networking complexities and enforcing policies.
 
-### Why Do We Need a Service Mesh?
+**Why Do We Need a Service Mesh?**
 
 In a microservices architecture, applications are broken down into smaller, independent services. As the number of services grows, managing them becomes complex:
-
-✅ **Service Discovery** – How do services find and communicate with each other?  
-✅ **Traffic Routing** – How do we ensure efficient load balancing, retries, and failovers?  
-✅ **Security** – How do we enforce authentication, authorization, and encryption between services?  
-✅ **Observability** – How do we track and debug requests flowing across multiple services?  
+- Service Discovery – How do services find and communicate with each other?  
+- Traffic Routing – How do we ensure efficient load balancing, retries, and failovers?  
+- Security – How do we enforce authentication, authorization, and encryption between services?  
+- Observability – How do we track and debug requests flowing across multiple services?  
 
 A service mesh like Istio helps solve these challenges by automating service-to-service communication, ensuring security, and providing deep observability.
 
----
-
-## 2. Istio Components
+**Istio Components**
 
 Istio is made up of a **Control Plane** and a **Data Plane**:
 
