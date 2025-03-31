@@ -83,18 +83,18 @@ kubectl get pods -n istio-system
 
 ---
 
-## 5. Deploy a Microservice App and Enable Istio
+**Deploy a Microservice App and Enable Istio**
 
-### Step 1: Deploy a Sample Microservice (Bookinfo App)
+Step 1: Deploy a Sample Microservice (Bookinfo App)
 ```sh
 kubectl create namespace istio-demo
 kubectl label namespace istio-demo istio-injection=enabled
 kubectl apply -f https://raw.githubusercontent.com/istio/istio/master/samples/bookinfo/platform/kube/bookinfo.yaml -n istio-demo
 ```
 
-✅ **Enable Istio Injection:** Adding `istio-injection=enabled` label ensures sidecar Envoy proxies are automatically added to pods.
+Enable Istio Injection: Adding `istio-injection=enabled` label ensures sidecar Envoy proxies are automatically added to pods.
 
-### Step 2: Expose the Application Using Istio Gateway
+Step 2: Expose the Application Using Istio Gateway
 ```sh
 kubectl apply -f https://raw.githubusercontent.com/istio/istio/master/samples/bookinfo/networking/bookinfo-gateway.yaml -n istio-demo
 ```
