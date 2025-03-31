@@ -18,6 +18,8 @@ Reason
 - First attempt → Kubernetes tries to pull the image. If it fails, it retries immediately.
 - Subsequent failures → Kubernetes increases the delay before the next retry (e.g., 10s, 20s, 40s, etc.).
 - Exponential BackOff → The wait time grows exponentially to prevent unnecessary retries from overloading the system.
+
+--
  
 ### CrashLoopBackOff ###
 ```bash
