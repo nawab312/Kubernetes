@@ -14,13 +14,12 @@ A service mesh like Istio helps solve these challenges by automating service-to-
 
 **Istio Components**
 
-Istio is made up of a **Control Plane** and a **Data Plane**:
+Istio is made up of a Control Plane and a Data Plane:
 
-### Control Plane (Manages and configures proxies)
-
-1️⃣ **Pilot** – Manages traffic rules, service discovery, and routing.  
-2️⃣ **Citadel** – Provides security, manages mTLS certificates.  
-3️⃣ **Galley** – Validates and distributes configurations (deprecated in Istio 1.6+).  
+*Control Plane (Manages and Configures Proxies)*
+- Pilot – Manages traffic rules, service discovery, and routing.  
+- Citadel – Provides security, manages mTLS certificates. Acts as the internal CA for issuing TLS certificates  
+- Galley – Validates and distributes configurations (deprecated in Istio 1.6+).  
 
 ### Data Plane (Handles actual traffic)
 
@@ -712,43 +711,25 @@ for i in {1..10}; do curl http://$INGRESS_IP/productpage; done
 ✅ **Real-World Traffic Strategies** → **Blue-Green, A/B Testing**.  
 
 
-# Day 4: Istio Security (Authentication & Authorization)
-
-Security is a core feature of Istio that helps in securing communication between services inside a Kubernetes cluster.
-
-## What You'll Learn Today
-
-✅ Mutual TLS (mTLS) → Encrypt traffic between microservices.  
-✅ Istio Authorization Policies (RBAC) → Control access between services.  
-✅ JWT Authentication → Secure services with JSON Web Tokens.  
-✅ Hands-on: Implement mTLS and RBAC in Istio.  
-
 ---
 
-## 1. Mutual TLS (mTLS) in Istio
+**Mutual TLS (mTLS) in Istio**
 
-### What is mTLS?
+What is mTLS?
+- In a typical microservices setup, services communicate over HTTP. But this is insecure!  
+- mTLS (Mutual TLS) ensures:
+ - Encryption: Traffic is encrypted between services.
+ - Authentication: Both client and server verify each other.
+ - No need for application-level TLS: Istio handles it automatically.
 
-🔹 In a typical microservices setup, services communicate over HTTP. But this is insecure!  
-🔹 mTLS (Mutual TLS) ensures:
+How mTLS Works in Istio
+- Service A (Client) → Service B (Server)
+- Istio `Envoy Proxies` manage certificates & encryption.
+- Both services verify each other's identity using TLS certificates.
+- Communication is secure & encrypted.
 
-- **Encryption:** Traffic is encrypted between services.
-- **Authentication:** Both client and server verify each other.
-- **No need for application-level TLS:** Istio handles it automatically.
-
-### How mTLS Works in Istio
-
-1. **Service A (Client) → Service B (Server)**
-2. Istio **Envoy Proxies** manage certificates & encryption.
-3. Both services verify each other's identity using **TLS certificates**.
-4. Communication is **secure & encrypted**.
-
----
-
-## 2. Enforcing mTLS in Istio
-
-### Step 1: Enable mTLS in Strict Mode
-
+Enforcing mTLS in Istio
+- Step 1: Enable mTLS in Strict Mode
 ```yaml
 apiVersion: security.istio.io/v1beta1
 kind: PeerAuthentication
@@ -759,9 +740,8 @@ spec:
   mtls:
     mode: STRICT
 ```
-
-🔹 **STRICT Mode:** Services must use **mTLS** (no plain HTTP allowed).  
-🔹 **PERMISSIVE Mode:** Accepts both **HTTP & mTLS** (for gradual migration).  
+ - `STRICT Mode`: Services must use mTLS (no plain HTTP allowed).
+ - `PERMISSIVE Mode`: Accepts both HTTP & mTLS (for gradual migration).  
 
 ### Step 2: Verify mTLS is Working
 
