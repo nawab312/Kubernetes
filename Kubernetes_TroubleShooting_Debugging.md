@@ -1,4 +1,4 @@
-### ImagePullBackOff / ErrImagePull ###
+**ImagePullBackOff / ErrImagePull**
 ```bash
 kubectl get pods
 NAME         READY   STATUS             RESTARTS   AGE
@@ -7,7 +7,7 @@ my-app-xyz   0/1     ImagePullBackOff   0          1m
 - ErrImagePull: This error happens immediately when Kubernetes fails to pull an image from a container registry.
 - ImagePullBackOff: This happens after multiple ErrImagePull failures. Kubernetes starts delaying retries exponentially (BackOff).
 
-**Reason**
+Reason
 - Kubernetes cannot pull the container image from the registry.
 - Possible causes:
   - Wrong image name or tag.
