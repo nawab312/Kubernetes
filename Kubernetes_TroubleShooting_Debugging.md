@@ -103,57 +103,114 @@ my-app-xyz   0/1     Evicted   0          5m
 
 ---
 
-**You have a Kubernetes cluster with a Deployment running a mission-critical application. However, the Pods are frequently restarting. There are no errors in the application logs. How would you debug this?**    
+**You have a Kubernetes cluster with a Deployment running a mission-critical application. However, the Pods are frequently restarting. There are no errors in the application logs. How would you debug this?**   
 
-Since the application logs don’t show any errors, the issue might be related to resource limits, OOM kills, readiness/liveness probes, or underlying node issues
-- I would start by inspecting the pod events and status using:
-  - `kubectl describe pod <pod-name> -n <namespace>`. This will show me reasons for restarts, such as OOM kills, failed probes, or node issues.
-- If the pod was OOMKilled, I’d check the container exit reason using:
-  - `kubectl get pod <pod-name> -o jsonpath='{.status.containerStatuses[*].state.terminated.reason}'`. If the container has terminated, it prints the reason (e.g., `Completed`, `Error`, `OOMKilled`, `ContainerCannotRun`). If the container is still running or not yet terminated, it returns an empty string.
-  - I’d check the pod logs from the previous run to see if there were memory spikes before termination: `kubectl logs <pod-name> --previous`
-  - To confirm system-level memory issues, I’d check the node's memory usage:
+Debugging Frequent Pod Restarts in a Kubernetes Cluster
+- Resource Limits (OOMKills)
+- Readiness/Liveness Probe Failures
+- Node-Level Issues
+- Container-Level Issues
+- Networking or Persistent Volume Problems
+
+Step 1: Inspect Pod Events and Status
+```bash
+kubectl describe pod <pod-name> -n <namespace>
+```
+This provides insights into: OOMKills, Probe failures, Node-related issues
+
+Step 2: Check for Out-of-Memory (OOMKilled) Issues
+- If the pod was OOMKilled, confirm using:
+```bash
+kubectl get pod <pod-name> -o jsonpath='{.status.containerStatuses[*].state.terminated.reason}'
+```
+Possible outputs: 
+- OOMKilled → Memory limit exceeded.
+- Completed → The container exited successfully.
+- Error → The container crashed.
+
+Further Investigation:
+- Check previous container logs for memory spikes:
+  ```bash
+  kubectl logs <pod-name> --previous
+  ```
+- Check node and pod memory usage:
+  ```bash
+  kubectl top node
+  kubectl top pod -n <namespace>
+  ```
+- Adjust Resource Limits (if needed) in the Deployment YAML:
+  ```yaml
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  ```
+
+Step 3: Debug Liveness/Readiness Probe Failures
+- If the pod is not OOMKilled but is still restarting, check liveness probe failures:
+```bash
+kubectl describe pod <pod-name> -n <namespace>
+```
+- If probe failures are found, inspect the probe configuration:
+  ```yaml
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  ```
+
+Step 4: Investigate Node-Level Issues
+- If the pod is not OOMKilled and probes are fine, check node health:
+  ```bash
+  kubectl get nodes -o wide
+  kubectl describe node <node-name>
+  ```
+- Additional Node Debugging
+  - Check system logs for kubelet failures:
     ```bash
-    kubectl top node
-    kubectl top pod -n <namespace>
+    journalctl -u kubelet -f
     ```
-- If the pod is not OOMKilled but is restarting due to liveness probe failures
-  - `kubectl describe pod <pod-name> -n <namespace>`. I’d specifically look at the `Liveness probe failed` messages. If the probe is failing, I’d check the probe configuration in the Deployment YAML
-    ```yaml
-     livenessProbe:
-      httpGet:
-        path: /health
-        port: 8080
-      initialDelaySeconds: 5
-      periodSeconds: 10
+  - Look for disk pressure, network issues, or crashes.
+- Test if the issue is node-specific
+  - Drain the node and move the pod elsewhere:
+    ```bash
+    kubectl cordon <node-name>
+    kubectl drain <node-name> --ignore-daemonsets --delete-emptydir-data
     ```
-- If probes are fine, but the pod is still restarting
-  - Node-Level Issues:
-    - Check node health and availability:
-      ```bash
-      kubectl get nodes -o wide
-      kubectl describe node <node-name>
-      ```
-    - journalctl logs on the node to check for kernel crashes, disk pressure, or kubelet errors: `journalctl -u kubelet -f`
-  - Container-Level Issues:
-    - Check Docker/container runtime logs:
-      ```bash
-      docker ps -a | grep <container-id>
-      docker logs <container-id>
-      ```
-    - Verify if the container is exiting due to CrashLoopBackOff:
-      ```bash
-      kubectl get pod <pod-name> -o jsonpath='{.status.containerStatuses[*].state.waiting.reason}'
-      ```
-    - Networking Issues:
-      - If the pod depends on external services, I’d check DNS resolution: `kubectl exec -it <pod-name> -- nslookup <service-name>`
-      - Check CNI plugin status: `kubectl get pods -n kube-system | grep cni`
-    - Persistent Volume Issues (if applicable):
-      - Check if the volume mount is failing: `kubectl describe pod <pod-name> | grep Mount`
-- If everything seems fine but the issue persists, I’d:
-  - Enable detailed logging on the kubelet and check `/var/log/kubelet.log`.
-  - Check if the cluster has any active policies (e.g., `LimitRange` or `PodSecurityPolicy`) affecting pod scheduling.
-  - Consider moving the pod to another node using `kubectl cordon` and `kubectl drain` to see if the issue is node-specific.
- 
+
+Step 5: Check Container Runtime Issues
+- If node-level checks do not show issues, investigate container failures:
+  - Check container runtime logs (Docker, Containerd, CRI-O):
+    ```bash
+    docker ps -a | grep <container-id>
+    docker logs <container-id>
+    ```'
+
+Step 6: Debug Networking Issues
+- If the pod relies on external services, test DNS resolution:
+  ```bash
+  kubectl exec -it <pod-name> -- nslookup <service-name>
+  ```
+- Check CNI plugin health:
+  ```bash
+  kubectl get pods -n kube-system | grep cni
+  ```
+
+Step 7: Check Persistent Volume Issues (If Applicable)
+- If the pod mounts a volume, verify if it's failing:
+  ```bash
+  kubectl describe pod <pod-name> | grep Mount
+  ```
+- If volume mounting is failing, check:
+  - PersistentVolumeClaim (PVC) status
+  - Storage class compatibility
+  - Storage class compatibility
+
 ---
 
 **Question** In a Kubernetes cluster, a Pod remains in "Terminating" state for an extended period even after issuing kubectl delete pod <pod-name>. What is the most likely reason?
