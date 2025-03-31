@@ -100,7 +100,7 @@ Since the application logs don’t show any errors, the issue might be related t
 - I would start by inspecting the pod events and status using:
   - `kubectl describe pod <pod-name> -n <namespace>`. This will show me reasons for restarts, such as OOM kills, failed probes, or node issues.
 - If the pod was OOMKilled, I’d check the container exit reason using:
-  - `kubectl get pod <pod-name> -o jsonpath='{.status.containerStatuses[*].state.terminated.reason}'`
+  - `kubectl get pod <pod-name> -o jsonpath='{.status.containerStatuses[*].state.terminated.reason}'`. If the container has terminated, it prints the reason (e.g., `Completed`, `Error`, `OOMKilled`, `ContainerCannotRun`). If the container is still running or not yet terminated, it returns an empty string.
   - I’d check the pod logs from the previous run to see if there were memory spikes before termination: `kubectl logs <pod-name> --previous`
   - To confirm system-level memory issues, I’d check the node's memory usage:
     ```bash
