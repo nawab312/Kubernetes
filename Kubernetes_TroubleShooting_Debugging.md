@@ -4,6 +4,8 @@ kubectl get pods
 NAME         READY   STATUS             RESTARTS   AGE
 my-app-xyz   0/1     ImagePullBackOff   0          1m
 ```
+- ErrImagePull: This error happens immediately when Kubernetes fails to pull an image from a container registry.
+- ImagePullBackOff: This happens after multiple ErrImagePull failures. Kubernetes starts delaying retries exponentially (BackOff).
 
 **Reason**
 - Kubernetes cannot pull the container image from the registry.
@@ -11,6 +13,11 @@ my-app-xyz   0/1     ImagePullBackOff   0          1m
   - Wrong image name or tag.
   - Private registry authentication failure.
   - Image does not exist.
+
+*BackOff* means that the system is gradually increasing the delay before retrying a failed operation. In the case of ImagePullBackOff or ErrImagePull, it specifically refers to progressively longer wait times before attempting to pull the container image again. How BackOff Works in ImagePullBackOff
+- First attempt → Kubernetes tries to pull the image. If it fails, it retries immediately.
+- Subsequent failures → Kubernetes increases the delay before the next retry (e.g., 10s, 20s, 40s, etc.).
+- Exponential BackOff → The wait time grows exponentially to prevent unnecessary retries from overloading the system.
  
 ### CrashLoopBackOff ###
 ```bash
