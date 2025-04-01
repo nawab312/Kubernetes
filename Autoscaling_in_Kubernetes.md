@@ -263,6 +263,9 @@ spec:
         averageUtilization: 50
 ```
 
+![image](https://github.com/user-attachments/assets/b7047619-9b97-4b07-96fe-d4981a9b3b2b)
+
+
 **Scaling Based on Memory**
 ```yaml
 metrics:
