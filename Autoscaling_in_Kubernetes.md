@@ -12,6 +12,34 @@
 HPA continuously monitors the resource utilization of pods and adjusts the number of replicas accordingly. It uses the *Kubernetes Metrics API* to fetch resource utilization data. HPA Workflow
 - Monitor Metrics: HPA collects metrics (like CPU or memory usage) using the Metrics Server or custom metric providers (like Prometheus).
 - Compare Against Target: It compares the current resource utilization with the target threshold set in the HPA configuration.
+- HPA Relies on Resource Requests
+  - HPA scales pods based on CPU and memory utilization. However, for it to calculate utilization properly, each pod must have resource requests defined.
+  - Kubernetes calculates utilization using the formula:
+
+    ![image](https://github.com/user-attachments/assets/ceaefd38-e447-4e38-8241-78d5d723a394)
+
+  - If requests are not defined, Kubernetes does not have a baseline to compare against, making autoscaling ineffective.
+    ```yaml
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: my-app
+    spec:
+      replicas: 2
+      template:
+        spec:
+          containers:
+          - name: my-app
+            image: my-app:latest
+            resources:
+              requests:
+                cpu: "500m"
+                memory: "256Mi"
+              limits:
+                cpu: "1000m"
+                memory: "512Mi"
+      ```
+    
 - Scale Up or Down:
   - Scale Up: If the resource utilization exceeds the threshold, HPA increases the number of pod replicas.
   - Scale Down: If the resource utilization is below the threshold, HPA decreases the number of pod replicas.
