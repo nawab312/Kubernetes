@@ -74,6 +74,8 @@ spec:
   nodeSelector:
     disktype: ssd
 ```
+- Check label of Nodes: `kubectl get nodes --show-labels`
+- Label a Node: `kubectl label node <node-name> disktype=ssd`
 
 **etcd**
 - Is a distributed key-value store used by Kubernetes to store all cluster data. 
