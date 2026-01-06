@@ -12,6 +12,9 @@ In a microservices architecture, applications are broken down into smaller, inde
 
 A service mesh like Istio helps solve these challenges by automating service-to-service communication, ensuring security, and providing deep observability.
 
+<img width="889" height="382" alt="image" src="https://github.com/user-attachments/assets/850243ad-5dc1-4011-91ae-06944b7573c9" />
+
+
 **Istio Components**
 
 Istio is made up of a Control Plane and a Data Plane:
