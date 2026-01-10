@@ -147,6 +147,28 @@ Step-by-step: how traffic really enters on bare metal
   - If I run a database in a Deployment with a PVC, is it still stateful?
     - Yes, because data exists
     - StatefulSet is recommended, but storage defines state
+   
+---
 
+**How does storage work in Kubernetes on bare metal?**
+- Kubernetes itself does not provide storage; it only provides an abstraction through PersistentVolumes and PersistentVolumeClaims.
+- On bare metal, storage must be provisioned using external solutions like NFS, Ceph, Longhorn, or local disks.
+- Applications request storage using a PersistentVolumeClaim, which is then bound to a PersistentVolume based on the StorageClass and availability.
+- Data persists beyond pod restarts, and recovery from node failure depends on whether the storage is local or network-based.
+
+The 4 building blocks (in order)
+- PersistentVolume (PV)
+  - Actual storage, Comes from NFS, Ceph, disk, etc., Exists outside pods
+  - Think: Real Disk
+- PersistentVolumeClaim (PVC)
+  - A request for storage
+  - Pod never talks to PV directly
+  - Think: Storage Request
+- StorageClass
+  - Defines how storage is created
+  - Needed for dynamic provisioning
+  - Think: Storage Template
+- Volume Mount
+  - Attaches storage to the pod filesystem
 
 
