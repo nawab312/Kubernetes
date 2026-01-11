@@ -178,5 +178,5 @@ Bare-metal reality (Important)
 - Local storage
   - Fast, Node-specific, Node dies → data gone
 - Network storage
-  - Slower
+  - Slower, Node-independent, Node dies → data recoverable
 
