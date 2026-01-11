@@ -156,6 +156,7 @@ Step-by-step: how traffic really enters on bare metal
 - Applications request storage using a PersistentVolumeClaim, which is then bound to a PersistentVolume based on the StorageClass and availability.
 - Data persists beyond pod restarts, and recovery from node failure depends on whether the storage is local or network-based.
 
+
 The 4 building blocks (in order)
 - PersistentVolume (PV)
   - Actual storage, Comes from NFS, Ceph, disk, etc., Exists outside pods
@@ -170,5 +171,12 @@ The 4 building blocks (in order)
   - Think: Storage Template
 - Volume Mount
   - Attaches storage to the pod filesystem
+  - Think: Disk plugged into container
 
+
+Bare-metal reality (Important)
+- Local storage
+  - Fast, Node-specific, Node dies → data gone
+- Network storage
+  - Slower
 
