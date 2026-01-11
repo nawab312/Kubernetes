@@ -18,6 +18,72 @@
 
 *FOLLOW UP QUESTIONS*
 
+**How do we join Worker Nodes to the Cluster**
+- STEP 0: What exists already
+  - A control-plane node (the “brain”)
+  - Kubernetes is running there
+  - API Server is listening on port `6443`
+- STEP 1: Control plane creates a “join pass”
+  - On the control-plane node, Kubernetes creates:
+    - *A temporary token* (like a one-time password)
+    - *A certificate fingerprint* (to verify identity)
+  - This is what `kubeadm token create` does.
+- STEP 2: Prepare the worker node (very important)
+  - On the worker node:
+    - Install container runtime (containerd)
+    - Install kubelet and kubeadm
+    - Disable swap
+  - At this point:
+    - Worker node is not part of the cluster
+    - It’s just a normal Linux server
+- STEP 3: Worker node knocks on the control-plane door
+  - On the control-plane node, run:
+    ```bash
+    kubeadm token create --print-join-command
+    ```
+  - It prints the exact join command output we should copy-paste.
+    ```bash
+    kubeadm join 172.30.1.2:6443 --token tjhoxw.kn4l1h89cohlz25x --discovery-token-ca-cert-hash sha256:be1034db92fbafa1221a8e71631ba97d7a99b6976faa9829e46e0d6ee65e01a4
+    ```
+  - It is of form
+    ```bash
+    sudo kubeadm join <CONTROL_PLANE_IP>:6443 \
+    --token <TOKEN> \
+    --discovery-token-ca-cert-hash sha256:<HASH>
+    ```
+- STEP 4: Control plane verifies the worker
+  - Control plane checks:
+    - Is the token valid?
+    - Is it not expired?
+    - Does the CA hash match?
+    - If any check fails → join rejected
+    - If all pass → join accepted
+- STEP 5: kubelet starts talking to the API serve
+  - Once accepted:
+    - kubelet starts running on the worker
+    - kubelet registers itself as a Node object
+    - You can now see the node with:
+    ```bash
+    kubectl get nodes
+    ```
+    - But status is: `NotReady`
+- STEP 6: Why the node is NotReady. 
+  - Because:
+    - Kubernetes does not provide networking
+    - No CNI yet on that node
+  - Without networking:
+    - Pods can’t communicate
+    - Node is unsafe to schedule pods
+- STEP 7: CNI config reaches the node
+  - When CNI (Calico, etc.) is installed:
+    - CNI pod runs on the new node
+    - Networking is configured
+    - Pod-to-pod networking works
+  - Now Kubernetes marks the node: `Ready`
+    
+    
+    
+
 **Why do we disable swap in Kubernetes?**
 - Swap is disabled in Kubernetes because the scheduler and kubelet rely on accurate memory usage to make scheduling and eviction decisions.
 - If swap is enabled, a node may appear to have free memory while it is actually swapping, which can lead to unpredictable performance and delayed Out-Of-Memory handling.
