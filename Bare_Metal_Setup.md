@@ -92,7 +92,7 @@
 
 ---
 
-**How will you update Kubernetes Cluster on Bare Metal Server**
+**How will you upgrade Kubernetes Cluster on Bare Metal Server**
 - I will follow a ROLLING UPGRADE approach.
 - I upgrade the control-plane components first using kubeadm, ensuring etcd quorum is maintained.
 - Then I upgrade worker nodes one by one by draining each node, upgrading kubelet and kubeadm, and bringing the node back into service.
@@ -100,7 +100,9 @@
   - Before upgrading:
     - Read Kubernetes version skew rules
     - Control plane must be upgraded before workers
-    - kubeadm must be upgraded to the same version as the target Kubernetes control-plane version before running `kubeadm upgrade`
+    - kubeadm must be upgraded to the same version as the target Kubernetes control-plane version before running `kubeadm upgrade`. So we upgrade `kubeadm` first. Then use it to upgrade the cluster
+
+---
 
 **How does traffic enter a Kubernetes cluster, especially on bare metal?**
 - Traffic enters a Kubernetes cluster through Services and Ingress.
