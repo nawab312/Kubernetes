@@ -101,7 +101,66 @@
     - Read Kubernetes version skew rules
     - Control plane must be upgraded before workers
     - kubeadm must be upgraded to the same version as the target Kubernetes control-plane version before running `kubeadm upgrade`. So we upgrade `kubeadm` first. Then use it to upgrade the cluster
+- Step 2: Upgrade Control-Plane nodes (one at a time)
+  - On each control-plane node:
+    - 2.1 Upgrade kubeadm
+      - ```bash
+        sudo apt update
+        sudo apt install -y kubeadm=<new-version>
+        ```
+    - 2.2 Plan the upgrade
+      - ```bash
+        sudo kubeadm upgrade plan
+        ```
+        - This tell you Current version, Target version, Safe upgrade path
+    - 2.3 Apply the upgrade (first control-plane)
+      - ```bash
+        sudo kubeadm upgrade apply v1.xx.x
+        ```
+        - What happens: API server upgraded, Controller-manager upgraded, Scheduler upgraded, etcd upgraded (if stacked). Cluster stays running.
+    - 2.4 Upgrade kubelet & kubectl
+      - ```bash
+        sudo apt install -y kubelet=<new-version> kubectl=<new-version>
+        sudo systemctl restart kubelet
+        ```
+- Step 3: Upgrade Worker Nodes (Rolling)
+  - For each worker node, repeat:
+  - 3.1 Drain the Node
+    - ```bash
+      kubectl drain <node-name> --ignore-daemonsets
+      ```
+    - Meaning: Move workloads away safely
+  - 3.2 Upgrade kubeadm & kubelet
+    - ```bash
+      sudo apt install -y kubeadm=<new-version>
+      sudo kubeadm upgrade node
+      sudo apt install -y kubelet=<new-version>
+      sudo systemctl restart kubelet
+      ```
+  - 3.3 Bring Node Back
+    - ```bash
+      kubectl uncordon <node-name>
+      ```
+- Step 4: Validate cluster
+  - `kubectl get nodes`
+  - `kubectl get pods -A`
+  - Application health checks
 
+
+**Bare-metal nuance (important)**
+- No managed upgrades
+- You own: etcd backups, rollback plan, downtime risk
+- Always take etcd snapshot before upgrade.
+
+**What happens if upgrade fails halfway?**
+- Case 1: Control plane upgrade fails (This is the scary one.)
+  - What usually happens:
+    - API server may still be running
+    - Some components upgraded, some not
+    - Cluster may be partially functional
+  - Key insight:
+    - `kubeadm upgrade` is transaction-like and repeatable
+  
 ---
 
 **How does traffic enter a Kubernetes cluster, especially on bare metal?**
