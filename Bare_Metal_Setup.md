@@ -160,7 +160,38 @@
     - Cluster may be partially functional
   - Key insight:
     - `kubeadm upgrade` is transaction-like and repeatable
-  
+  - Meaning:
+    - You can usually re-run the same upgrade command
+    - kubeadm continues from where it stopped
+    ```bash
+    sudo kubeadm upgrade apply v1.xx.x
+    ```
+- Case 2: etcd is affected (critical)
+  - If:
+    - etcd fails
+    - quorum is lost
+    - data corruption occurs
+  - Then:
+    - Cluster state is unsafe
+  - Correct action:
+    - Stop control-plane components
+    - Restore etcd from snapshot
+    - Restart control-plane
+- Case 3: Worker node upgrade fails
+  - This is not critical. Why?
+    - Node was drained
+    - Workloads already moved
+  - Recovery:
+    - Fix package issue
+    - Roll back kubelet
+    - Or remove node and rejoin
+  - Worst case:
+    ```bash
+    kubeadm reset
+    kubeadm join...
+    ```
+  - Cluster stays healthy.
+    
 ---
 
 **How does traffic enter a Kubernetes cluster, especially on bare metal?**
