@@ -3,7 +3,7 @@ The need for Ingress in Kubernetes arose primarily to address the challenges of 
 - LoadBalancer: This requires setting up a *separate external load balancer for each service*. This approach can be costly, particularly in cloud environments where each load balancer comes with a fee.
 ![Ingress1](https://github.com/nawab312/Kubernetes/blob/main/Images/Ingress1.png)
 
-- **Ingress** is an API object that manages external HTTP/HTTPS access to services within a cluster
+- **Ingress** is an API object that manages *external HTTP/HTTPS* access to services within a cluster
 - It provides routing rules to expose multiple services under a single IP or domain.
 - An **Ingress Resource** is a Kubernetes object that defines rules for external access to your services in the cluster, such as HTTP and HTTPS traffic.
 - **Ingress Controller** is a Kubernetes component responsible for implementing the rules defined in the Ingres. NGINX Ingress Controller, Traefik, HAProxy, Istio. If the Ingress Controller is missing, the Ingress resource will not be assigned an external IP, and external traffic won't reach the application.
