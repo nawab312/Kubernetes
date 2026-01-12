@@ -80,9 +80,6 @@
     - Networking is configured
     - Pod-to-pod networking works
   - Now Kubernetes marks the node: `Ready`
-    
-    
-    
 
 **Why do we disable swap in Kubernetes?**
 - Swap is disabled in Kubernetes because the scheduler and kubelet rely on accurate memory usage to make scheduling and eviction decisions.
@@ -94,6 +91,16 @@
 - It automates complex tasks such as certificate generation, kubeconfig creation, control-plane setup, and etcd configuration, which are error-prone when done manually.
 
 ---
+
+**How will you update Kubernetes Cluster on Bare Metal Server**
+- I will follow a ROLLING UPGRADE approach.
+- I upgrade the control-plane components first using kubeadm, ensuring etcd quorum is maintained.
+- Then I upgrade worker nodes one by one by draining each node, upgrading kubelet and kubeadm, and bringing the node back into service.
+- Step 1: Check compatibility
+  - Before upgrading:
+    - Read Kubernetes version skew rules
+    - Control plane must be upgraded before workers
+    - kubeadm must be upgraded to the same version as the target Kubernetes control-plane version before running `kubeadm upgrade`
 
 **How does traffic enter a Kubernetes cluster, especially on bare metal?**
 - Traffic enters a Kubernetes cluster through Services and Ingress.
