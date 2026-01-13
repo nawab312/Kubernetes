@@ -34,6 +34,7 @@ roleRef:
 ```
 
 **Service Accounts**
+
 Service Account is a special type of Kubernetes account used by pods to interact with the Kubernetes API server and other resources in a Kubernetes cluster. 
 It allows applications running inside the cluster to authenticate to the Kubernetes API and access cluster resources in a controlled and secure manner.
 - Default Service Account
