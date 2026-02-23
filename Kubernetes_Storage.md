@@ -73,7 +73,8 @@ spec:
 - If `storageClassName: ""` This means do not use dynamic provisioning. Instead, the PVC will only bind to an existing PV.
 
 ### Kubernetes Storage Class ###
-- Storage Classes enable *Dynamic Provisioning of PVs*. Different storage backends (like AWS EBS, GCP Persistent Disks, etc.) can have their own StorageClass configurations.
+- Storage Classes enable *Dynamic Provisioning of PVs*. It means when you create a PVC, Kubernetes can automatically create the underlying storage for you — based on rules defined in a StorageClass. No manual PV creation.
+- Different storage backends (like AWS EBS, GCP Persistent Disks, etc.) can have their own StorageClass configurations.
 - `provisioner`: The plugin used to provision storage (e.g., kubernetes.io/aws-ebs).
 - `parameters`: Backend-specific configurations like volume type or IOPS.
 ```yaml
@@ -86,6 +87,21 @@ parameters:
   type: gp2
   fsType: ext4
 ```
+- Example in Amazon EKS. If you define:
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+spec:
+  storageClassName: gp3
+  resources:
+    requests:
+      storage: 10Gi
+```
+  - Kubernetes calls the EBS CSI driver
+  - A new EBS volume is created
+  - A PV object is automatically generated
+  - PVC binds to it
+  - You didn’t create the PV manually.
 
 **What is the difference between static and dynamic provisioning of Persistent Volumes**
 
