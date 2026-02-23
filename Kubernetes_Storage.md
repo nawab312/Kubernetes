@@ -105,6 +105,68 @@ spec:
   - PVC binds to it
   - You didn’t create the PV manually.
 
+---
+
+**Dynamic provisioning can fail due to AZ mismatch or IAM permission**
+
+*AZ Mismatch — What Does That Actually Mean?*
+- EBS volumes are created in one specific Availability Zone.
+- Node A → `ap-south-1a` , Node B → `ap-south-1b`
+- If your PVC triggers dynamic provisioning:
+  - The EBS volume gets created in one AZ only
+  - That volume cannot attach to nodes in other AZs
+
+- Scenario 1: Immediate binding mode (default in older setups)
+  - PVC is created → Volume immediately created in some AZ (random/first available).
+  - Later: Pod gets scheduled to a node in a different AZ.
+  - Result: `AttachVolume.Attach failed`
+  - The volume exists. The pod exists. But they are in different AZs.
+
+*IAM Permission Failure — What Does That Mean?*
+- Dynamic provisioning requires the CSI driver to call AWS APIs like:
+  - `ec2:CreateVolume`
+  - `ec2:AttachVolume`
+  - `ec2:DeleteVolume`
+
+- PVC stuck in `Pending`
+  - StorageClass exists
+  - EBS CSI driver is installed
+  - Nodes are healthy
+  - Event shows: `UnauthorizedOperation`
+  - Which IAM role is actually failing — node role or service account role?
+- Answer:
+  - In modern Amazon EKS setups using the EBS CSI driver, the failing role is: *The IAM role attached to the ebs-csi-controller service account (via IRSA)*. Not the node role.
+  - Dynamic provisioning (`CreateVolume`) happens in the controller pod, not on the worker node.
+  - The node role is used for: `AttachVolume` , `Mounting`
+  - But CreateVolume happens before attachment — and it is executed by the CSI controller.
+  - Checking Precisely:
+    - Step 1 — Check PVC events: `kubectl describe pvc <name>`. Look at Events, It often includes the exact AWS error.
+    - Step 2 — Check CSI controller logs. It will show the exact AWS API call that failed.
+      ```bash
+      kubectl get pods -n kube-system | grep ebs
+      kubectl logs -n kube-system <ebs-csi-controller-pod>
+      ```
+    - Step 3 — Verify which IAM role is attached
+      ```bash
+      kubectl get sa ebs-csi-controller -n kube-system -o yaml
+      ```
+    - Step 4 - Look for annotation:
+      ```bash
+      eks.amazonaws.com/role-arn
+      ```
+    - That ARN is the IAM role actually being used. Now inspect that role in AWS and verify it has:
+      ```bash
+      ec2:CreateVolume
+      ec2:AttachVolume
+      ec2:DeleteVolume
+      ec2:Describe*
+      ```
+
+ 
+<img width="724" height="205" alt="image" src="https://github.com/user-attachments/assets/f1045800-df6f-4abb-9458-f8835a7c2546" />
+
+---
+
 **What is the difference between static and dynamic provisioning of Persistent Volumes**
 
 *Static provisioning* of Persistent Volumes (PVs) involves manually creating PVs ahead of time by the administrator, with the user requesting a Persistent Volume Claim (PVC) that matches the predefined PV. In *dynamic provisioning*, Kubernetes automatically creates PVs based on PVCs when a request is made, without requiring predefined PVs. Dynamic provisioning is more flexible and scalable, while static provisioning offers more control and predictability.
