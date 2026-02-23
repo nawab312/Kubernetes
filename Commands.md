@@ -46,3 +46,8 @@ Rollback the Update
 ```bash
 kubectl rollout undo deployment/nginx-deployment
 ```
+
+Connect to EKS Cluster
+```bash
+aws eks update-kubeconfig --region ap-south-1 --name cluster-name
+```
