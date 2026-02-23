@@ -97,11 +97,11 @@ spec:
     requests:
       storage: 10Gi
 ```
-  - Kubernetes calls the EBS CSI driver
-  - A new EBS volume is created
-  - A PV object is automatically generated
-  - PVC binds to it
-  - You didn’t create the PV manually.
+    - Kubernetes calls the EBS CSI driver
+    - A new EBS volume is created
+    - A PV object is automatically generated
+    - PVC binds to it
+    - You didn’t create the PV manually.
 
 **What is the difference between static and dynamic provisioning of Persistent Volumes**
 
