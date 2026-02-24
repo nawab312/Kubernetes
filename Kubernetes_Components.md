@@ -226,9 +226,31 @@ DaemonSet in Kubernetes ensures that a copy of a specific Pod is running on ever
 
 ### ConfigMaps and Secrets ###
 **ConfigMaps**
-- A Kubernetes object used to store non-sensitive configuration data in key-value pairs
-- Use Cases: Application settings (e.g., environment variables). File-based configurations (e.g., .properties or .json files)
-- ConfigMaps are mounted into Pods as: Environment variables, Command-line arguments, Volumes (files in a directory).
+- A Kubernetes object used to store non-sensitive configuration data as key-value pairs in API Server. It is:
+  - Not part of the container image
+  - Not embedded into the pod spec at runtime
+  - Injected into pods either:
+    - As environment variables
+    - As mounted files (volume)
+
+- *Case 1: ConfigMap Mounted as a Volume*
+  - When mounted as a volume:
+    - Kubernetes uses a special mechanism (projected volume).
+    - The kubelet periodically checks for ConfigMap updates.
+    - If the ConfigMap changes, the mounted file content is updated.
+  - So:
+    - ✅ The file inside the container gets updated automatically
+    - ❌ The application does NOT automatically reload the new config
+    - Kubernetes updates the file. But your app must detect and reload it.
+    - If the app reads config only at startup → no effect until restart.
+   
+- *Case 2: ConfigMap Used as Environment Variables*
+  - Environment variables are injected into the container only at container start time. They are part of the container runtime environment.
+  - So:
+    - ❌ Updating the ConfigMap does NOT update environment variables in running pods
+    - ❌ No automatic refresh
+    - You must restart the pod to apply changes
+    - This is because environment variables are immutable once the process starts.
 
 **Secrets**
 - Kubernetes objects to securely store sensitive information such as passwords, tokens, or certificates. Data is encoded using Base64 *(not encrypted by default)*.
