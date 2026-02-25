@@ -1,0 +1,13 @@
+### What is KEDA? ###
+- KEDA (Kubernetes Event-Driven Autoscaling) is an extension for Kubernetes that allows you to scale workloads based on external event sources, not just CPU/memory.
+- By default, Kubernetes uses the **Horizontal Pod Autoscaler (HPA)** which scales based on:
+  - CPU
+  - Memory
+  - Custom metrics (if configured)
+- KEDA enhances this by:
+  - Watching external systems (Kafka, SQS, Prometheus, Azure Queue, etc.)
+  - Converting those metrics into Kubernetes metrics
+  - Automatically scaling pods up or down
+  - Even scaling to zero
+- **HPA = Resource-Based Scaling**
+- **KEDA = Event-Based Scaling**
