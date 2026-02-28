@@ -9,3 +9,14 @@
 
 **What it Actually Watches**
 - Cluster Autoscaler monitors: Pods stuck in Pending, Scheduling failure reasons, Node group templates, Allocatable resources
+- It does not watch: CPU usage, Memory percentage, Pod metrics, HPA metrics. This belongs to HPA
+
+---
+
+Cluster Autoscaler will NOT scale if pods are pending due to:
+- Taints without tolerations
+- NodeSelector mismatch
+- Affinity rules not satisfiable
+- Unbound PVC
+- Topology constraints
+- Pod too large for any node type
