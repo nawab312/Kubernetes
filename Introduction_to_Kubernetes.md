@@ -10,6 +10,8 @@
 ### Kubernetes Architecture ###
 The Master node is responsible for for managing the *overall cluster state*, *scheduling applications*, and ensuring that the *desired state of the system* is maintained. The key components of the master node include
 
+<img width="742" height="470" alt="image" src="https://github.com/user-attachments/assets/5533b5b9-469e-49f0-b1f9-1b76354baae2" />
+
 **API Server (kube-apiserver)**
 - Entry point for all API requests. It exposes Kubernetes APIs and is responsible for handling all the internal and external requests for the cluster. It validates and processes REST requests, updates etcd, and sends commands to the other components.
 - You can interact with the API server directly using `kubectl`. The `-v=8` flag increases verbosity and shows API calls made to the API server.
