@@ -77,13 +77,31 @@ my-app-xyz   0/1     Pending   0          3m
 ```
 
 **Reason**
-- The pod is not scheduled to any node.
-- Possible causes:
-  - No available nodes (resource constraints)
-  - Pod nodeSelector or affinity rules mismatch.
- 
-- Check Node Status: `kubectl get nodes` If nodes are `NotReady`, check node logs.
-- Check Taints & Tolerations: If the node is tainted, the pod needs a toleration:
+- Pod is not scheduled to any node
+
+**Troubleshoot**
+- ```bash
+  kubectl describe pod <pod-name> # 1st Step Always
+  ```
+- Look at the Events section. This tells you immediately whether the issue is:
+  - Insufficient CPU/Memory
+    - Even if nodes are “free”, they may not have enough requested capacity.
+    - Pods request 2 CPU but nodes only have 1.5 CPU Free → Scheduler Refuses.
+  - Node(s) had Taint or Didn't match Node Selector
+    - ```bash
+      kubectl get pod <pod> -o yaml
+      ```
+    - Look for: `nodeSelector`, `nodeAffinity`, `tolerations`, `topologySpreadConstraints`
+  - Pod has unbound Immediate PersistentVolumeClaims
+    - ```bash
+      kubectl get pvc
+      ```
+    - Unbound PVC = Pod stays Pending even if nodes are free.
+- *Cluster Autoscaler is enabled then also Pods are in Pending State*
+  - Cluster Autoscaler does not scale based on metrics like CPU usage. That’s the job of HPA.
+  - Cluster Autoscaler works based on Unschedulable pods, not metrics.
+  - Cluster Autoscaler only scales when pods are unschedulable due to resource shortage, not due to:
+    - Affinity Mismatch, Taints, PVC, Topology Constraint
 
 ### Evicted ###
 ```bash
