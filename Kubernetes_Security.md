@@ -127,6 +127,7 @@ kubectl get secret $(kubectl get serviceaccount my-sa -o jsonpath='{.secrets[0].
 **Network Policy**
 - A Network Policy is a Kubernetes object that controls traffic flow to/from Pods based on rules.
 - By default, all traffic is allowed between Pods in a cluster. Network Policies restrict unwanted traffic.
+- NetworkPolicies are always created within a single namespace and control traffic only for pods in that namespace. To manage traffic between pods in different namespaces, the policy must be in the *receiving pod’s namespace* and can use `namespaceSelector` to allow or block traffic from another namespace. You cannot directly control pods in another namespace from a policy in a different namespace.
 
 ---
 
