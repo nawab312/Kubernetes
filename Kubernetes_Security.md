@@ -88,12 +88,33 @@ spec:
 
 *Certificate-Based Authentication*
 - Uses client certificates to authenticate users.
-- Certificates are signed by the Kubernetes API server's Certificate Authority (CA).
-```bash
-openssl genrsa -out user.key 2048
-openssl req -new -key user.key -out user.csr -subj "/CN=user1/O=dev-team"
-```
-- The CN (Common Name) becomes the username, and O (Organization) can be mapped to RBAC groups.
+- Step 1: Generate a Private Key
+  ```bash
+  openssl genrsa -out user.key 2048
+  ```
+  - What it does: Creates a private key. Think of this as your secret password — never share it.
+  - Purpose: Used to prove your identity when requesting a certificate.
+- Step 2: Create a Certificate Signing Request (CSR)
+  ```bash
+  openssl req -new -key user.key -out user.csr -subj "/CN=user1/O=dev-team"
+  ```
+  - What it does: Makes a request to get your certificate signed.
+  - The CN (Common Name) becomes the username, and O (Organization) can be mapped to RBAC groups.
+- Step 3: Submit the CSR to be Signed by the CA
+  ```bash
+  openssl x509 -req -in user.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out user.crt -days 365
+  ```
+  - The Kubernetes cluster (or your admin) uses the cluster Certificate Authority (CA) to sign your CSR.
+  - Result: You now have a certificate (user.crt) that the Kubernetes API trusts.
+- Step 4: Configure kubectl to Use the Certificate
+  - Add the key and certificate to your kubeconfig file:
+  ```bash
+  kubectl config set-credentials user1 --client-certificate=user.crt --client-key=user.key
+  kubectl config set-context user1-context --cluster=my-cluster --user=user1
+  kubectl config use-context user1-context
+  ```
+  - Now kubectl will present your certificate whenever you talk to the Kubernetes API.
+  
 
 *Token-Based Authentication*
 - Service Accounts use tokens to authenticate against the API server.
