@@ -68,6 +68,8 @@ spec:
       image: tensorflow:latest
 ```
 
+![image](https://github.com/user-attachments/assets/6466be37-1dea-4296-aac6-2bcab920e105)
+
 *Pod Affinity and Anti-Affinity*
 - Affinity: Prefer placing Pods on the same node/zone.
 - Anti-Affinity: Avoid placing Pods on the same node/zone.
@@ -108,9 +110,6 @@ spec:
 
 
 https://github.com/nawab312/Kubernetes/blob/main/Pods/Pod-2.yaml
-
-
-![image](https://github.com/user-attachments/assets/6466be37-1dea-4296-aac6-2bcab920e105)
 
 Probe (Probe Means: To test Behaviour of System) Mechanisms:
 - HTTP Probes: Sends an HTTP GET request to a specified endpoint.
