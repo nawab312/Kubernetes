@@ -209,6 +209,7 @@ spec:
 ```
 
 **Pod Security Policies (PSP) and Pod Security Admission (PSA)**
+
 *Pod Security Policies (PSP)*
 - Deprecated in Kubernetes 1.21 and removed in Kubernetes 1.25.
 
