@@ -107,9 +107,26 @@ spec:
 - Resource Limits:
     - Specify the maximum amount of CPU and memory a Pod can use.
     - Prevents a Pod from monopolizing resources.
-
-
-https://github.com/nawab312/Kubernetes/blob/main/Pods/Pod-2.yaml
+- The scheduler makes placement decisions using resource requests, not limits or real-time usage. The scheduler does not check actual CPU usage.
+  ```code
+  Sum of existing CPU requests + new pod request ≤ Node CPU capacity
+  ```
+- Example:
+  - Node capacity: `1 CPU`
+  - Existing pods:
+    ```code
+    requests = 1.4 CPU
+    limits   = 1.6 CPU
+    actual usage = 1.55 CPU
+    ```
+  - Your pod: `request = 0.5 CPU`
+  - Scheduler calculation: `1.4 + 0.5 = 1.9 CPU`
+  - Pod will be scheduled
+- What Happens After Scheduling
+  - Total possible CPU usage would be: `1.55 + 0.5`
+  - Potential demand: `2.05 CPU on a 2 CPU node`
+  - Linux CPU CFS throttling via cgroups will occur:
+    - Containers compete for CPU, some get throttled. But nothing crashes because CPU limits cause throttling, not termination.
 
 Probe (Probe Means: To test Behaviour of System) Mechanisms:
 - HTTP Probes: Sends an HTTP GET request to a specified endpoint.
