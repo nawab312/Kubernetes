@@ -217,3 +217,12 @@ spec:
   ```
 - So the Deployment controller creates a new ReplicaSet. Then that ReplicaSet creates new Pods.
 
+**kubectl delete pod mypod --force --grace-period=0**
+- `--force` removes the Pod object from the Kubernetes API immediately. Meaning Pod removed from etcd (cluster state). But this does not guarantee the container is instantly stopped on the node.
+- So for a short time you can have a strange situation:
+  ```code
+  Container still running
+  BUT
+  Pod object does not exist in the API
+  ```
+- This is called an *Orphaned Container*.
