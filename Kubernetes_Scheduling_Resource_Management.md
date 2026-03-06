@@ -193,16 +193,27 @@ spec:
       image: my-app
 ```
 
-In a Kubernetes cluster, you delete a Kibana pod, but it keeps getting recreated with the status Init:0/1. How would you permanently delete the Kibana Pod, and what underlying Kubernetes concepts explain this behavior
-- The pod is likely managed by a higher-level controller (e.g., Deployment, StatefulSet, DaemonSet, or Helm Release).
-- `kubectl get all | grep kibana` This will reveal whether Kibana is controlled by a Job, Deployment, StatefulSet, or Helm Release.
-```bash
-kubectl get all | grep kibana
-pod/post-delete-kibana-kibana-4cbkf   0/2     Init:0/1   0          5m31s
-job.batch/post-delete-kibana-kibana   Running   0/1           10m        10m
-```
-- Delete the Underlying Controller, Here it is the Job
-```bash
-kubectl delete job post-delete-kibana-kibana
-```
+---
+
+**If a Pod is manually deleted, will it be recreated?**
+- Yes. The Pod will be recreated automatically.
+- The *ReplicaSet controller* recreates the Pod.
+- Chain of Objects: When you create a Deployment like: `replicas: 3`. The following objects are created internally:
+  ```code
+  Deployment -> Manages rollout and updates
+   ↓
+  ReplicaSet -> Maintains desired Pod count
+   ↓
+  Pods -> Runs the container
+  ```
+
+**If you delete the ReplicaSet instead of the Pod, what will happen?**
+- When the ReplicaSet is deleted: Pods owned by ReplicaSet are also deleted
+- The Deployment controller is still present. But now Kubernetes sees:
+  ```code
+  Deployment exists
+  ReplicaSet = missing
+  Pods = missing
+  ```
+- So the Deployment controller creates a new ReplicaSet. Then that ReplicaSet creates new Pods.
 
