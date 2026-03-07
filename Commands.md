@@ -1,6 +1,6 @@
 Delete All Resources in the Current Namespace
 ```bash 
-kubectl delete all --all`
+kubectl delete all --all
 ```
 
 ```bash 
@@ -50,4 +50,10 @@ kubectl rollout undo deployment/nginx-deployment
 Connect to EKS Cluster
 ```bash
 aws eks update-kubeconfig --region ap-south-1 --name cluster-name
+```
+
+Node and Pod level Memory
+```bash
+kubectl top nodes
+kubectl top pod --all-namespaces --sort-by=memory
 ```
