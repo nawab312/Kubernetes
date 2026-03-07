@@ -178,7 +178,7 @@ metadata:
   name: deny-access-from-other-namespaces
   namespace: tenant2
 spec:
-  podSelector: {}
+  podSelector: {} # Apply to all pods in tenant2
   ingress:
     - from: []
   policyTypes:
