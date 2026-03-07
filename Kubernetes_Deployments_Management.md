@@ -46,6 +46,15 @@ When deploying applications in Kubernetes, different strategies ensure minimal d
   - Slow deployment if the application is large.
   - Difficult to test new versions before full rollout.
  
+You have a deployment with 3 replicas running in production. You do a rolling update but after the update, users are reporting intermittent 500 errors — meaning some requests succeed and some fail.
+What is happening and how do you fix it?
+- During a rolling update, Kubernetes is gradually replacing old pods with new ones. At some point both old and new pods are running simultaneously.
+- The 500 errors are coming from the new pods which have a bug or misconfiguration — while old pods are still serving traffic correctly.
+- Immediate Fix: `kubectl rollout undo deployment <deployment-name>`
+- Check rollout history: `kubectl rollout history deployment <deployment-name>`
+- Rollback to specific version: `kubectl rollout undo deployment <deployment-name> --to-revision=2`
+- How to prevent it in future: Add readiness probe — Kubernetes only sends traffic to a pod when readiness probe passes
+ 
 **Recreate Deployment**
 - Concept: Deletes all existing pods before creating new ones.
 - How it works:
