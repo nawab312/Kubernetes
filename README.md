@@ -13,11 +13,14 @@
 - **DaemonSets**
 - **Jobs and CronJobs**
 
-### Kubernetes Networking ###
-- **Cluster Networking Model**
-- **Service Discovery**
-- **Types of Services (ClusterIP, NodePort, LoadBalancer, ExternalName)**
-- **Network Policies**
+### 3 Services & Networking (Very heavily asked) ###
+- ClusterIP, NodePort, LoadBalancer — differences and when to use each
+- How kube-proxy works
+- DNS in Kubernetes — how Pods resolve service names
+- Endpoints and EndpointSlices
+- Headless services — what and why
+- Network Policies — restricting traffic between Pods
+- How Pod-to-Pod communication works across nodes
 
 ### Kubernetes Ingress & Load Balancing ###
 - **What is Ingress & Why is it Needed?**
