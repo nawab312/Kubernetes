@@ -692,6 +692,202 @@ Node never comes back → Force delete stuck pods -> kubectl delete pod myapp-po
 ---
 ---
 
+### Pod Stuck in Terminating State ###
+Pod stuck in Terminating means `kubectl delete pod` was run, the grace period has long expired, but the pod refuses to disappear.
+
+**Why This Happens — What Terminating Actually Means**
+```bash
+kubectl delete pod myapp-pod
+        ↓
+Kubernetes sets deletionTimestamp on the pod
+        ↓
+Pod enters Terminating state
+        ↓
+Kubernetes sends SIGTERM → Waits for grace period → Sends SIGKILL
+        ↓
+kubelet confirms container is dead
+        ↓
+Kubernetes removes the pod object 
+
+Stuck Terminating means: Something is blocking the pod object from being removed. Even after the container is dead
+```
+
+**Cause 1 — Node is Down or Unreachable**
+- This is the most common cause.
+  ```bash
+  Pod is on Node 2
+  Node 2 goes down / Network partition
+          ↓
+  Kubernetes cannot confirm container was killed
+          ↓
+  Pod stays in Terminating forever — Kubernetes is being safe
+  It will not delete a pod it cannot confirm is dead
+  ```
+- How to verify:
+  ```bash
+  kubectl get nodes
+  # node-2   NotReady   ← confirms node is down
+  
+  kubectl describe pod myapp-pod
+  # look at Node: field
+  # check if that node is NotReady
+  ```
+- How to fix:
+```bash
+# Option 1 — wait for node to recover
+# pod cleans up automatically when node comes back 
+
+# Option 2 — node is confirmed dead, safe to force delete
+kubectl delete pod myapp-pod --force --grace-period=0
+
+# Option 3 — on EKS terminate the dead node
+# pod object will be cleaned up automatically
+aws ec2 terminate-instances --instance-ids i-deadnode123
+```
+
+**Cause 2 — Finalizers Blocking Deletion**
+- This is the most important cause to know for interviews.
+- Finalizers are hooks on a Kubernetes object that must be completed before the object can be deleted. If the controller responsible for a finalizer is broken or missing, the pod is stuck forever.
+  ```bash
+  Pod has finalizer:
+    metadata:
+      finalizers:
+        - storage.kubernetes.io/pvc-protection
+        - networking.istio.io/cleanup
+  
+  kubectl delete pod is called
+          ↓
+  Kubernetes sets deletionTimestamp 
+          ↓
+  Kubernetes calls each finalizer controller: "hey, pod is being deleted, do your cleanup"
+          ↓
+  Finalizer controller does cleanup and removes itself from list
+          ↓
+  When finalizer list is empty → pod object deleted 
+  
+  If finalizer controller is broken/missing: Finalizer never removed from list. Pod stuck in Terminating forever 
+  ```
+- How to verify:
+  ```bash
+  kubectl get pod myapp-pod -o yaml | grep -A10 finalizers
+  
+  # metadata:
+  #   finalizers:
+  #     - networking.istio.io/cleanup   ← this is stuck
+  #   deletionTimestamp: "2026-03-09T10:00:00Z"
+  ```
+- How to fix — manually remove the finalizer:
+  ```bash
+  kubectl patch pod myapp-pod \
+      -p '{"metadata":{"finalizers":[]}}' \
+      --type=merge
+  
+  # this removes ALL finalizers
+  # pod object can now be deleted 
+  
+  # or edit directly
+  kubectl edit pod myapp-pod
+  # find finalizers section and delete the entries
+  # save and exit → pod disappears immediately
+  ```
+
+**Cause 3 — Volume Cannot Be Unmounted**
+```bash
+Pod is Terminating
+kubelet tries to unmount the EBS volume from the pod
+        ↓
+Unmount hangs — common reasons:
+  NFS/EFS mount is unresponsive
+  EBS volume stuck in detaching state in AWS
+  Process inside container still has file handle open
+        ↓
+kubelet waits for unmount to complete
+Pod stays Terminating 
+```
+- How to verify:
+  ```bash
+  kubectl describe pod myapp-pod
+  # Events:
+  #   Warning  FailedUnmountVolume  Unable to unmount volumes for pod
+  #   UnmountVolume.TearDown failed for volume "myapp-data"
+  ```
+- How to fix:
+  ```bash
+  # check EBS volume state in AWS
+  aws ec2 describe-volumes \
+      --volume-ids vol-1234567890 \
+      --query 'Volumes[].State'
+  
+  # if volume stuck in "detaching" in AWS console
+  # force detach from AWS console or CLI
+  aws ec2 detach-volume \
+      --volume-id vol-1234567890 \
+      --force
+  
+  # restart kubelet on the node to clear mount state
+  sudo systemctl restart kubelet
+  ```
+
+**Cause 4 — Istio/Service Mesh Sidecar Not Terminating**
+```bash
+Main container finished and exited 
+Istio envoy sidecar is still running 
+        ↓
+Pod stays Terminating because not ALL containers have exited
+Envoy waiting for something that never comes
+```
+- How to verify:
+  ```bash
+  kubectl describe pod myapp-pod
+  # Containers:
+  #   myapp:
+  #     State: Terminated  ← main app done
+  #   istio-proxy:
+  #     State: Running     ← sidecar still alive 
+  ```
+- How to fix:
+  ```bash
+  # send quit signal to envoy sidecar directly
+  kubectl exec myapp-pod -c istio-proxy -- \
+      curl -X POST http://localhost:15000/quitquitquit
+  
+  # long term fix — configure Istio to respect pod lifecycle
+  # in Istio config:
+  # EXIT_ON_ZERO_ACTIVE_CONNECTIONS: true
+  ```
+
+**Cause 5 — PodDisruptionBudget Blocking Eviction**
+- This happens during node drain, not regular delete. But pod appears stuck in Terminating
+- PDB says minAvailable: 3. All 3 pods are on nodes being drained simultaneously. Evicting any one of them would violate PDB. Kubernetes blocks the eviction. Pods stay in Terminating
+- How to verify:
+  ```bash
+  kubectl get pdb
+  # NAME       MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS
+  # myapp-pdb  3               N/A               0   ← zero allowed 
+  
+  kubectl get pods
+  # all 3 pods in Terminating — none can be evicted
+  ```
+- How to fix:
+  ```bash
+  # Option 1 — wait for pods to reschedule on other nodes
+  # then eviction proceeds
+  
+  # Option 2 — temporarily patch PDB to allow disruption
+  kubectl patch pdb myapp-pdb \
+      -p '{"spec":{"minAvailable":1}}' \
+      --type=merge
+  # eviction proceeds 
+  # restore PDB after drain completes
+  
+  # Option 3 — scale up first, then drain
+  kubectl scale deployment myapp --replicas=6
+  # now have extra pods → PDB satisfied → drain proceeds
+  ```
+
+---
+---
+
 ### kubectl Commands for Debugging ###
 
 **kubectl describe**
