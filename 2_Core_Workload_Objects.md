@@ -364,6 +364,228 @@ spec:
   - Pod restarts → Same PVC reattaches → Data preserved
   - Pod reschedules to different node → Same PVC reattaches
 
-**
+**Stable Network Identity**
+- Each StatefulSet Pod gets a stable DNS name via a Headless Service:
+- Headless Service name: mysql
+- Pod DNS names:
+  - mysql-0.mysql.default.svc.cluster.local
+  - mysql-1.mysql.default.svc.cluster.local
+  - mysql-2.mysql.default.svc.cluster.local
+- These names NEVER change even when pods restart
+- Your app connects to mysql-0 for writes
+- Your app connects to mysql-1 or mysql-2 for reads
+
+---
+---
+
+### DaemonSet — One Pod Per Node ###
+A DaemonSet ensures exactly one Pod runs on every node in the cluster. When a new node joins, the DaemonSet automatically adds a Pod to it. When a node is removed, the Pod is cleaned up.
+
+**What Runs as a DaemonSet**
+- Log collectors:
+  - Fluent Bit, Fluentd
+  - Every node needs to collect its own container logs
+  - Logs written to node disk → DaemonSet reads and ships to CloudWatch/ELK
+- Monitoring agents:
+  - Prometheus Node Exporter
+  - Every node needs to report its own CPU/Memory/Disk metrics
+- Networking:
+  - AWS VPC CNI plugin
+  - Calico, Cilium
+  - kube-proxy
+  - Network plugins need to run on every node
+- Security:
+  - Falco (runtime security scanning)
+  - Every node needs to be monitored for suspicious activity
+- Storage:
+  - AWS EBS CSI node plugin
+  - Needs to run on every node that mounts EBS volumes
+```yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluent-bit
+  namespace: logging
+spec:
+  selector:
+    matchLabels:
+      app: fluent-bit
+  template:
+    metadata:
+      labels:
+        app: fluent-bit
+    spec:
+      serviceAccountName: fluent-bit
+
+      containers:
+        - name: fluent-bit
+          image: fluent/fluent-bit:2.0
+          volumeMounts:
+            # mount node's container logs into the pod
+            - name: varlog
+              mountPath: /var/log
+            - name: varlibdockercontainers
+              mountPath: /var/lib/docker/containers
+              readOnly: true
+
+      volumes:
+        # read logs from the actual node filesystem
+        - name: varlog
+          hostPath:
+            path: /var/log
+        - name: varlibdockercontainers
+          hostPath:
+            path: /var/lib/docker/containers
+
+      # run on every node including master
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+          operator: Exists
+```
+
+**DaemonSet on Specific Nodes Only**
+```yaml
+spec:
+  template:
+    spec:
+      nodeSelector:
+        nodeType: gpu          # only run on GPU nodes
+
+      # or use node affinity for more complex rules
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: eks.amazonaws.com/nodegroup
+                    operator: In
+                    values:
+                      - monitoring-nodes
+```
+
+---
+---
+
+### Job and CronJob ###
+
+**Job — Run Once and Complete**
+- A Job creates one or more Pods to run a task to completion. Unlike Deployments, it does not try to keep Pods running forever.
+- Job examples:
+  - Database migration before app deploy
+  - Database migration before app deploy
+  - Batch data processing
+  - Sending bulk emails
+  - Generating a report
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migration
+spec:
+  # retry up to 3 times if it fails
+  backoffLimit: 3
+
+  template:
+    spec:
+      restartPolicy: OnFailure     # never use Always in a Job
+
+      containers:
+        - name: migration
+          image: myapp:1.0
+          command: ['python', 'manage.py', 'migrate']
+          env:
+            - name: DB_HOST
+              value: postgres-service
+```
+```bash
+Job starts Pod
+        ↓
+Pod runs python manage.py migrate
+        ↓
+Migration completes successfully (exit 0)
+        ↓
+Pod moves to Succeeded phase
+Job is marked Complete
+Pod is kept (not deleted) so you can check logs
+```
+
+**Job with Parallelism — Process Work in Parallel**
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: image-processor
+spec:
+  completions: 10       # need 10 successful completions
+  parallelism: 3        # run 3 pods at a time
+
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: processor
+          image: image-processor:1.0
+          command: ['python', 'process_image.py']
+```
+
+**CronJob — Run on a Schedule**
+- CronJob creates Jobs on a time-based schedule — exactly like Linux cron.
+```yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nightly-report
+spec:
+  # cron syntax: minute hour day month weekday
+  schedule: "0 2 * * *"          # run at 2:00 AM every day
+
+  # keep last 3 successful job logs
+  successfulJobsHistoryLimit: 3
+
+  # keep last 1 failed job log
+  failedJobsHistoryLimit: 1
+
+  # if previous job is still running, skip this run
+  concurrencyPolicy: Forbid       # or Allow or Replace
+
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: report-generator
+              image: myapp:1.0
+              command: ['python', 'generate_report.py']
+```
+
+**CronJob concurrencyPolicy**
+- Allow (default):
+  - If previous job still running → Start new job anyway
+  - Risk: Multiple jobs running simultaneously, competing for resources
+- Forbid:
+  - If previous job still running → Skip this scheduled run
+  - Safe for jobs that must not overlap (DB cleanup, migrations)
+- Replace:
+  - If previous job still running → Kill it and start fresh
+  - Use when you always want the latest run, not the old one
+
+---
+---
+
+### Full Picture — All Objects Together ###
+
+Your Application Stack on Kubernetes:
+```bash
+Deployment  → Frontend (stateless, 3 replicas, rolling updates)
+Deployment  → Backend API (stateless, 5 replicas)
+StatefulSet → PostgreSQL (stateful, 3 replicas, own PVC per pod)
+StatefulSet → Kafka (stateful, 3 brokers, own PVC per broker)
+DaemonSet   → Fluent Bit (one per node, collect all logs)
+DaemonSet   → Node Exporter (one per node, collect all metrics)
+Job         → DB Migration (runs once before each deploy)
+CronJob     → Nightly Report (runs at 2 AM every day)
+```
 
 
