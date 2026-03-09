@@ -2,15 +2,14 @@
 When deploying applications in Kubernetes, different strategies ensure minimal downtime, controlled rollouts, and seamless updates. Below are the primary deployment strategies:
 
 **Rolling Deployment (Default Strategy)**
-- Concept: Gradually replaces old pods with new ones
-- How it works:
-  - New Pods Are Created Gradually:
-    - Kubernetes starts creating new Pods alongside existing ones, based on `maxSurge` settings.
-  - Old Pods Are Terminated Gradually:
-    - Once new Pods are ready, old Pods are removed one by one, following `maxUnavailable` limits.
-  - Process Continues Until All Pods Are Updated
-
-  ![image](https://github.com/user-attachments/assets/4a388946-2862-4829-ae5a-f83e51e87d0d)
+- Rolling update ensures zero downtime during a deployment by replacing old pods with new ones gradually, not all at once.
+- The Two Knobs
+  - `maxUnavailable` — How many pods can be below desired count during the update
+    - `maxUnavailable: 0` -> You must always have full desired capacity running. No old pod dies until a new one is ready.
+    - `maxUnavailable: 1` -> 1 pod can be killed before a replacement is ready.
+  - `maxSurge` — How many extra pods can exist above desired count during the update.
+    - `maxSurge: 1` -> Kubernetes can create 1 extra pod temporarily (beyond your desired replica count
+    - `maxSurge: 0` -> No extra pods allowed. Must kill one before creating one.
 
   ```yaml
   apiVersion: apps/v1
@@ -34,7 +33,7 @@ When deploying applications in Kubernetes, different strategies ensure minimal d
             image: my-app:v2  # New image version
   ```
 
-  ![image](https://github.com/user-attachments/assets/bc93c10f-92b5-40fe-94a2-64d887492095)
+<img width="642" height="387" alt="image" src="https://github.com/user-attachments/assets/02b023a5-aff4-43cc-97fd-c3a81c3021b5" />
 
 - Use Cases:
   - Suitable for most applications.
@@ -54,6 +53,23 @@ What is happening and how do you fix it?
 - Check rollout history: `kubectl rollout history deployment <deployment-name>`
 - Rollback to specific version: `kubectl rollout undo deployment <deployment-name> --to-revision=2`
 - How to prevent it in future: Add readiness probe — Kubernetes only sends traffic to a pod when readiness probe passes
+
+You have a Kubernetes Deployment with rollingUpdate strategy — maxSurge: 1 and maxUnavailable: 0. During a rollout, you notice the deployment is completely stuck — no new pods are being scheduled, no old pods are being terminated, and the rollout has been in this state for 20+ minutes. The cluster has sufficient node capacity. What is the most likely cause, and how do you diagnose it?
+```bash
+Kubernetes creates new pod (surge)
+         ↓
+Waits for new pod to become READY
+         ↓
+New pod NEVER becomes ready (bad readiness probe)
+         ↓
+Kubernetes won't kill old pod (maxUnavailable: 0)
+         ↓
+Can't create another new pod (already at maxSurge)
+         ↓
+   STUCK FOREVER
+```
+
+---
  
 **Recreate Deployment**
 - Concept: Deletes all existing pods before creating new ones.
