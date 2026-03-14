@@ -2055,11 +2055,14 @@ spec:
 ### Pod Phases
 
 ```
-Pending     → Accepted by K8s, not yet running (scheduling, image pull, init containers)
-Running     → Bound to node, at least one container running
-              ⚠️  Running ≠ Ready! Pod may not be serving traffic.
+Pending     → Accepted by Kubernetes API server, not yet running (Waiting for: scheduler assignment, image pull, Init Container completion)
+Running     → Bound to node, at least one container running. livenessProbe and readinessProbe are active in this phase
+              Running ≠ Ready! Pod may not be serving traffic (readinessProbe may still be failing)
 Succeeded   → All containers exited 0. Will not restart. Terminal for Jobs.
-Failed      → All containers terminated, at least one non-zero exit.
+Failed      → All containers terminated, at least one non-zero exit or was killed by the system
+              Behavior depends on restartPolicy.
+                Always → kubelet restarts (common for Deployments),
+                OnFailure → kubelet restarts only on failure (common for Jobs)              
 Unknown     → Node communication lost. Pod state cannot be determined.
 ```
 
